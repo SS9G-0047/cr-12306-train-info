@@ -1,0 +1,109 @@
+name: Build and Deploy to GitHub Pages
+
+on:
+  schedule:
+    # 每天北京时间 07:20（即 UTC 前一天 23:20）
+    - cron: "20 23 * * *"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Download proxies.txt from latest release
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release download proxies-latest --repo "$GITHUB_REPOSITORY" --pattern "proxies.txt" --dir .
+
+      - name: Install dependencies
+        run: npm install
+
+      - name: Run crawler
+        run: npm run dev
+
+      - name: Prepare dist folder
+        run: |
+          if [ ! -d "dist" ]; then
+            echo "dist folder not found, nothing to deploy."
+            exit 1
+          fi
+      - name: Deploy to gh-pages branch
+        uses: peaceiris/actions-gh-pages@v4
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_branch: gh-pages
+          publish_dir: ./dist
+          force_orphan: true
+
+      - name: "Set target date for release (same as crawler: today UTC + 13 days)"
+        run: echo "TARGET_DATE=$(date -u -d '+13 days' +%Y%m%d)" >> $GITHUB_ENV
+
+      - name: Read crawler summary
+        id: summary
+        run: |
+          if [ -f dist/summary.json ]; then
+            echo "LIST_REQ=$(jq -r '.trainList.requested // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "LIST_SUCCESS=$(jq -r '.trainList.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "LIST_FAILED=$(jq -r '.trainList.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_REQ=$(jq -r '.trainDetail.requested // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_SUCCESS=$(jq -r '.trainDetail.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_FAILED_HTTP=$(jq -r '.trainDetail.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_COMPENSATED=$(jq -r '.trainDetail.compensated // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_PLANNED=$(jq -r '.trainDetail.plannedDistinctTrainNumbers // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_ROWS_API=$(jq -r '.trainDetail.distinctTrainsFilledByApi // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_ROWS_MISSING=$(jq -r '.trainDetail.distinctTrainsStillMissingAfterCompensation // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+          else
+            for VAR in LIST_REQ LIST_SUCCESS LIST_FAILED DETAIL_REQ DETAIL_SUCCESS DETAIL_FAILED_HTTP DETAIL_COMPENSATED DETAIL_PLANNED DETAIL_ROWS_API DETAIL_ROWS_MISSING; do
+              echo "${VAR}=N/A" >> $GITHUB_ENV
+            done
+          fi
+      - name: Create GitHub Release and upload JSON/MD assets
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: data-${{ env.TARGET_DATE }}
+          name: 车次数据 ${{ env.TARGET_DATE }}
+          body: |
+            车次列表与车次详情，对应日期 ${{ env.TARGET_DATE }}。
+            ### 车次列表（12306 search 接口）
+            | 指标 | 数值 |
+            | --- | --- |
+            | 请求次数（含重试） | ${{ env.LIST_REQ }} |
+            | 成功响应次数 | ${{ env.LIST_SUCCESS }} |
+            | 最终失败队列条目 | ${{ env.LIST_FAILED }} |
+            ### 车次详情（12306 queryTrainInfo 接口）
+            | 指标 | 数值 |
+            | --- | --- |
+            | 请求次数（含重试） | ${{ env.DETAIL_REQ }} |
+            | 成功响应次数 | ${{ env.DETAIL_SUCCESS }} |
+            | 最终失败队列条目 | ${{ env.DETAIL_FAILED_HTTP }} |
+            | 前日 HerbertHe Release JSON 补偿条数（按 train_no） | ${{ env.DETAIL_COMPENSATED }} |
+            ### 车次详情条目（按计划车号）
+            | 指标 | 数值 |
+            | --- | --- |
+            | 待获取车次（去重后） | ${{ env.DETAIL_PLANNED }} |
+            | 接口拉回条数 | ${{ env.DETAIL_ROWS_API }} |
+            | 补偿后仍缺条数 | ${{ env.DETAIL_ROWS_MISSING }} |
+            ### 文件说明
+            - train_list_${{ env.TARGET_DATE }}.json / .md 车次列表
+            - train_detail_${{ env.TARGET_DATE }}.json / .md 车次详情（全部）
+            - train_detail_车次等级_${{ env.TARGET_DATE }}.json / .md 按 G、D、C 等等级分文件
+          files: |
+            dist/*.json
+            dist/*.md
+          skip_if_tag_exists: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
