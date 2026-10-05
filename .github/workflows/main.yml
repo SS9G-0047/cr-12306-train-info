@@ -24,10 +24,16 @@ jobs:
         with:
           node-version: "20"
 
-      - name: Download proxies.txt from latest release
+      - name: Download proxies.txt from latest release (optional)
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: gh release download proxies-latest --repo "$GITHUB_REPOSITORY" --pattern "proxies.txt" --dir .
+        run: |
+          if ! gh release download proxies-latest --repo "$GITHUB_REPOSITORY" --pattern "proxies.txt" --dir . 2>/dev/null; then
+            echo "Own proxies-latest not found; trying upstream..."
+            if ! gh release download proxies-latest --repo HerbertHe/cr-12306-train-info --pattern "proxies.txt" --dir . 2>/dev/null; then
+              echo "No proxies.txt found. The crawler will connect directly."
+            fi
+          fi
 
       - name: Install dependencies
         run: npm install
@@ -41,6 +47,7 @@ jobs:
             echo "dist folder not found, nothing to deploy."
             exit 1
           fi
+
       - name: Deploy to gh-pages branch
         uses: peaceiris/actions-gh-pages@v4
         with:
@@ -71,6 +78,7 @@ jobs:
               echo "${VAR}=N/A" >> $GITHUB_ENV
             done
           fi
+
       - name: Create GitHub Release and upload JSON/MD assets
         uses: softprops/action-gh-release@v2
         with:
