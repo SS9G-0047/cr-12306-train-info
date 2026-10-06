@@ -39,6 +39,8 @@ jobs:
         run: npm install
 
       - name: Run crawler
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: npm run dev
 
       - name: Prepare dist folder
@@ -70,11 +72,12 @@ jobs:
             echo "DETAIL_SUCCESS=$(jq -r '.trainDetail.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "DETAIL_FAILED_HTTP=$(jq -r '.trainDetail.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "DETAIL_COMPENSATED=$(jq -r '.trainDetail.compensated // "N/A"' dist/summary.json)" >> $GITHUB_ENV
+            echo "DETAIL_REUSED=$(jq -r '.trainDetail.reusedFromPreviousRelease // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "DETAIL_PLANNED=$(jq -r '.trainDetail.plannedDistinctTrainNumbers // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "DETAIL_ROWS_API=$(jq -r '.trainDetail.distinctTrainsFilledByApi // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "DETAIL_ROWS_MISSING=$(jq -r '.trainDetail.distinctTrainsStillMissingAfterCompensation // "N/A"' dist/summary.json)" >> $GITHUB_ENV
           else
-            for VAR in LIST_REQ LIST_SUCCESS LIST_FAILED DETAIL_REQ DETAIL_SUCCESS DETAIL_FAILED_HTTP DETAIL_COMPENSATED DETAIL_PLANNED DETAIL_ROWS_API DETAIL_ROWS_MISSING; do
+            for VAR in LIST_REQ LIST_SUCCESS LIST_FAILED DETAIL_REQ DETAIL_SUCCESS DETAIL_FAILED_HTTP DETAIL_COMPENSATED DETAIL_REUSED DETAIL_PLANNED DETAIL_ROWS_API DETAIL_ROWS_MISSING; do
               echo "${VAR}=N/A" >> $GITHUB_ENV
             done
           fi
@@ -99,6 +102,7 @@ jobs:
             | 成功响应次数 | ${{ env.DETAIL_SUCCESS }} |
             | 最终失败队列条目 | ${{ env.DETAIL_FAILED_HTTP }} |
             | 前日 HerbertHe Release JSON 补偿条数（按 train_no） | ${{ env.DETAIL_COMPENSATED }} |
+            | 复用上一 Release 详情条数 | ${{ env.DETAIL_REUSED }} |
             ### 车次详情条目（按计划车号）
             | 指标 | 数值 |
             | --- | --- |
@@ -107,8 +111,10 @@ jobs:
             | 补偿后仍缺条数 | ${{ env.DETAIL_ROWS_MISSING }} |
             ### 文件说明
             - train_list_${{ env.TARGET_DATE }}.json / .md 车次列表
+            - new.json 相较最近 Release 新增的车次列表
             - train_detail_${{ env.TARGET_DATE }}.json / .md 车次详情（全部）
             - train_detail_车次等级_${{ env.TARGET_DATE }}.json / .md 按 G、D、C 等等级分文件
+            - stopped.json 两周内未重新出现的停运车次及详情
           files: |
             dist/*.json
             dist/*.md

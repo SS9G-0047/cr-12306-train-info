@@ -7,15 +7,19 @@
 - **车次列表抓取**：按车次等级（G/D/C/K/Z/T/Y/S）与数字前缀递归查询覆盖所有车次，单次返回少于 200 条视为该前缀已完整并立即持久化
 - **并发控制**：车次详情查询通过任务调度器 `TaskScheduler` 自适应调整并发（范围 2 ~ 6），成功率高自动提速，失败率高自动降速，任务启动随机延迟降低被识别概率
 - **失败重试**：请求失败会进入失败队列，在主抓取结束后按轮重试，最多 5 轮
+- **车次详情增量更新**：先读取当前仓库最近的 `data-YYYYMMDD` Release，与本次车次列表按 `train_no` 和站点车次比较；变化不超过 300 个时仅重新查询变化车次，超过 300 个时全量重抓。没有历史数据时也会全量抓取
+- **停运车次保留**：从本次列表消失的车次会从活动详情 JSON 移除并写入 `stopped.json`；两周内重新出现时恢复为活动车次，连续两周未出现则从 `stopped.json` 永久删除
 - **车次详情最终失败补偿**：当车次详情接口在重试结束后仍失败，会尝试从 HerbertHe 仓库前一日 Release 的 `train_detail_YYYYMMDD.json` 拉取数据，按 `train_no` 相同进行补偿回填（补偿日口径为「当前日期 + 13 天」的前一日，即 `targetDate - 1 day`）
 - **代理池优化**：动态淘汰连接失败/超时的代理，只移除真正失效的代理，保持代理池质量；不同请求使用随机浏览器 User-Agent 降低被拦截概率
 - **空结果重试**：空响应会重试确认，避免因临时限流导致的数据丢失
 - **车次列表输出**（去重后按车号聚合、按车次类型排序）：
   - 车次列表 JSON：`dist/train_list_YYYYMMDD.json`
   - 车次列表 Markdown：`dist/train_list_YYYYMMDD.md`
+  - 相较最近 Release 新增的车次：`dist/new.json`（按 `train_no` 比较，包含该车号对应的站点车次记录）
 - **车次详情抓取与输出**（按去重后的车号逐个请求、站点名自动去空格）：
   - 车次详情 JSON：`dist/train_detail_YYYYMMDD.json`
   - 车次详情 Markdown：`dist/train_detail_YYYYMMDD.md`
+- **停运车次输出**：`dist/stopped.json`（保留消失未满两周的车次详情）
 - **运行报告**：
   - GitHub Pages：`dist/README.md`
   - 统计摘要：`dist/summary.json`（用于 GitHub Action 写入 release 描述）
@@ -38,7 +42,7 @@
 - **代理与网络**：
   - 支持通过 `HttpsProxyAgent` 使用代理，代理池逻辑在 `src/utils/request.ts` 中
   - 需可访问 12306 搜索接口；在受限网络环境下建议配置可用的 HTTP 代理
-- **容错保证**：无论获取车次列表成功多少，最终都会生成 `dist` 目录和采集报告，GitHub Action 永远不会因无数据而部署失败
+- **容错保证**：请求异常时仍会生成 `dist` 目录和采集报告；若车次列表请求经过重试后仍失败，程序会停止数据处理，避免将不完整列表误判为停运车次
 
 ## 统计口径（summary.json / Pages / Release）
 
@@ -51,6 +55,7 @@
 - **`trainDetail`**：车次详情接口统计 + 补偿统计
   - `requested / success / failed`：同上（按 HTTP 请求次数统计）
   - `compensated`：从前一日 Release 的 `train_detail_YYYYMMDD.json` 里按 `train_no` 命中并回填的条数（按车号条目统计）
+  - `reusedFromPreviousRelease`：未变化、直接复用最近 Release 详情的条数
   - `plannedDistinctTrainNumbers`：本次计划获取的去重后车号数（即当日列表去重后的 `train_no` 数）
   - `distinctTrainsFilledByApi`：车次详情接口成功返回并落盘的条目数（按车号条目统计）
   - `distinctTrainsStillMissingAfterCompensation`：补偿后仍缺失详情的车号数
