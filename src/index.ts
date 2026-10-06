@@ -101,6 +101,9 @@ class Spider {
       this.targetDate = this.getTargetDate();
       this.previousReleaseData = await this.fetchLatestReleaseData();
       await ensureProxyPool();
+      console.log(
+        "[增量判断] 开始完整扫描车次列表；列表扫描和失败重试完成后，才会计算 traincode 变化率并输出详情抓取模式",
+      );
       await this.fetchTrainList();
 
       for (
@@ -138,6 +141,9 @@ class Spider {
         );
       }
 
+      console.log(
+        `[增量判断] 列表扫描和重试完成，共收集 ${this.trainList.size} 条列表记录，开始计算变化率`,
+      );
       await this.processTrainListData();
       this.prepareTrainDetailRefreshPlan();
       await this.fetchTrainDetails();
