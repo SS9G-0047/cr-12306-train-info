@@ -44,6 +44,8 @@ type PreviousReleaseData = {
   stoppedDetails: TrainDetailEntry[];
 };
 
+const FULL_REFRESH_TRAIN_CODE_CHANGE_RATE = 0.1;
+
 class Spider {
   /**
    * 任务调度器
@@ -459,6 +461,12 @@ class Spider {
     );
     const previousData = this.previousReleaseData;
     const previousTrainCodes = new Map<string, Set<string>>();
+    const previousStationTrainCodes = new Set<string>(
+      (previousData?.trainList ?? []).map((train) => train.station_train_code),
+    );
+    const currentStationTrainCodes = new Set(
+      Array.from(this.trainList, (train) => train.station_train_code),
+    );
     const previousDetails = new Map<string, TrainDetailEntry>();
     const previousStopped = new Map<string, StoppedTrainEntry>();
     const previousStoppedDetails = new Map<string, TrainDetailEntry>();
@@ -535,8 +543,23 @@ class Spider {
       }
     }
 
+    const addedTrainCodes = [...currentStationTrainCodes].filter(
+      (code) => !previousStationTrainCodes.has(code),
+    );
+    const removedTrainCodes = [...previousStationTrainCodes].filter(
+      (code) => !currentStationTrainCodes.has(code),
+    );
+    const changedTrainCodeCount =
+      addedTrainCodes.length + removedTrainCodes.length;
+    const trainCodeChangeRate =
+      previousStationTrainCodes.size > 0
+        ? changedTrainCodeCount / previousStationTrainCodes.size
+        : currentStationTrainCodes.size > 0
+          ? 1
+          : 0;
     const shouldRefreshAll =
-      !previousData || changedTrainNos.size > 300;
+      !previousData ||
+      trainCodeChangeRate >= FULL_REFRESH_TRAIN_CODE_CHANGE_RATE;
     this.trainDetailRefreshTrainNos = shouldRefreshAll
       ? new Set(
           [...currentTrainNos].filter((trainNo) => !resumedStopped.has(trainNo)),
@@ -567,15 +590,13 @@ class Spider {
       }
     }
 
-    if (shouldRefreshAll) {
-      console.log(
-        `[详情] ${previousData ? `检测到 ${changedTrainNos.size} 个 train_no 变化（超过 300）` : "无历史数据"}，全量刷新 ${currentTrainNos.size} 条详情`,
-      );
-    } else {
-      console.log(
-        `[详情] 检测到 ${changedTrainNos.size} 个 train_no 变化，仅刷新 ${this.trainDetailRefreshTrainNos.size} 条详情`,
-      );
-    }
+    const refreshMode = shouldRefreshAll ? "全量抓取" : "增量抓取";
+    const changeReason = previousData
+      ? `traincode变化 ${changedTrainCodeCount}/${previousStationTrainCodes.size} (${(trainCodeChangeRate * 100).toFixed(2)}%，新增 ${addedTrainCodes.length}、移除 ${removedTrainCodes.length}，阈值 ${(FULL_REFRESH_TRAIN_CODE_CHANGE_RATE * 100).toFixed(0)}%)`
+      : "没有历史Release";
+    console.log(
+      `[详情抓取模式] ${refreshMode}：${changeReason}；待请求详情 ${this.trainDetailRefreshTrainNos.size}/${currentTrainNos.size}，复用已有详情 ${this.trainDetailReusedCount} 条`,
+    );
 
     for (const train of this.trainListFilteredByTrainNo) {
       if (resumedStopped.has(train.train_no)) continue;
