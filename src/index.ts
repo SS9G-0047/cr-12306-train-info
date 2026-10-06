@@ -226,20 +226,22 @@ class Spider {
 
   /**
    * 获取所有车次列表
-   * 遍历所有车次等级，每个车次等级遍历打乱后的 1 - 9 编号
+   * 遍历所有车次等级的 0 - 9 前缀，以及纯数字车次的 0 - 9 前缀
    * 日期默认使用当前日期 + 13 天
    */
   private fetchTrainList = async () => {
     const startTime = process.hrtime();
     const promises: Promise<void>[] = [];
 
-    // 生成 1-9 数组并打乱顺序
-    const numbers = this.shuffleArray(Array.from({ length: 9 }, (_, i) => i + 1));
+    const numbers = this.shuffleArray(Array.from({ length: 10 }, (_, i) => i));
 
     for (const trainClass of TRAIN_CLASS_LIST) {
       for (const i of numbers) {
         promises.push(this.processTrainList(`${trainClass}${i}`, this.targetDate));
       }
+    }
+    for (const i of numbers) {
+      promises.push(this.processTrainList(String(i), this.targetDate));
     }
 
     await Promise.all(promises);

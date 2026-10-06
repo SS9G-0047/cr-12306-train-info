@@ -1,4 +1,4 @@
-export const TRAIN_CLASS_LIST = ["G", "D", "C", "K", "Z", "T", "S", "Y"];
+export const TRAIN_CLASS_LIST = ["G", "D", "C", "K", "Z", "T", "L", "S", "Y"];
 
 export const PAGE_SIZE = 200;
 
