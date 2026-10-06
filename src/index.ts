@@ -41,6 +41,7 @@ type PreviousReleaseData = {
   trainList: ITrain[];
   trainDetails: TrainDetailEntry[];
   stoppedTrains: StoppedTrainEntry[];
+  stoppedDetails: TrainDetailEntry[];
 };
 
 class Spider {
@@ -54,7 +55,7 @@ class Spider {
    * 车次列表
    */
   private trainList: Set<ITrain> = new Set();
-  private newTrainList: ITrain[] = [];
+  private newTrainNos = new Set<string>();
 
   /**
    * 车次编号列表
@@ -388,17 +389,25 @@ class Spider {
       return response.json();
     };
     const stoppedUrl = assetUrl("stopped.json");
-    const [trainListUnknown, trainDetailsUnknown, stoppedUnknown] =
+    const stoppedDetailUrl = assetUrl("stopped_detail.json");
+    const [
+      trainListUnknown,
+      trainDetailsUnknown,
+      stoppedUnknown,
+      stoppedDetailsUnknown,
+    ] =
       await Promise.all([
         downloadJson(trainListUrl),
         downloadJson(trainDetailUrl),
         stoppedUrl ? downloadJson(stoppedUrl) : Promise.resolve([]),
+        stoppedDetailUrl ? downloadJson(stoppedDetailUrl) : Promise.resolve([]),
       ]);
 
     if (
       !Array.isArray(trainListUnknown) ||
       !Array.isArray(trainDetailsUnknown) ||
-      !Array.isArray(stoppedUnknown)
+      !Array.isArray(stoppedUnknown) ||
+      !Array.isArray(stoppedDetailsUnknown)
     ) {
       throw new Error(`[Release] ${release.tag_name} 中的 JSON 资产格式无效`);
     }
@@ -422,17 +431,25 @@ class Spider {
           typeof entry?.stopped_at === "string" &&
           Number.isFinite(Date.parse(entry.stopped_at)) &&
           (entry.data === undefined || Array.isArray(entry.data)),
+      ) ||
+      !stoppedDetailsUnknown.every(
+        (entry) =>
+          typeof entry?.train_no === "string" &&
+          typeof entry?.station_train_codes === "string" &&
+          Array.isArray(entry?.data) &&
+          entry.data.length > 0,
       )
     ) {
       throw new Error(`[Release] ${release.tag_name} 中的车次记录格式无效`);
     }
     console.log(
-      `[Release] 已加载基线 ${release.tag_name}: ${trainListUnknown.length} 条车次列表, ${trainDetailsUnknown.length} 条详情, ${stoppedUnknown.length} 条停运记录`,
+      `[Release] 已加载基线 ${release.tag_name}: ${trainListUnknown.length} 条车次列表, ${trainDetailsUnknown.length} 条详情, ${stoppedUnknown.length} 条停运记录, ${stoppedDetailsUnknown.length} 条停运详情`,
     );
     return {
       trainList: trainListUnknown as ITrain[],
       trainDetails: trainDetailsUnknown as TrainDetailEntry[],
       stoppedTrains: stoppedUnknown as StoppedTrainEntry[],
+      stoppedDetails: stoppedDetailsUnknown as TrainDetailEntry[],
     };
   };
 
@@ -444,6 +461,7 @@ class Spider {
     const previousTrainCodes = new Map<string, Set<string>>();
     const previousDetails = new Map<string, TrainDetailEntry>();
     const previousStopped = new Map<string, StoppedTrainEntry>();
+    const previousStoppedDetails = new Map<string, TrainDetailEntry>();
 
     for (const train of previousData?.trainList ?? []) {
       const codes = previousTrainCodes.get(train.train_no) ?? new Set<string>();
@@ -453,16 +471,42 @@ class Spider {
     for (const entry of previousData?.trainDetails ?? []) {
       previousDetails.set(entry.train_no, entry);
     }
+    for (const entry of previousData?.stoppedDetails ?? []) {
+      previousStoppedDetails.set(entry.train_no, entry);
+    }
 
     const now = new Date();
     const retentionMs = 14 * 24 * 60 * 60 * 1000;
+    const resumedStopped = new Set<string>();
     for (const entry of previousData?.stoppedTrains ?? []) {
       const stoppedTime = Date.parse(entry.stopped_at);
+      const stoppedAge = now.getTime() - stoppedTime;
+      const detailData =
+        entry.data ?? previousStoppedDetails.get(entry.train_no)?.data;
       if (
-        !currentTrainNos.has(entry.train_no) &&
-        now.getTime() - stoppedTime < retentionMs
+        stoppedAge >= 0 &&
+        stoppedAge < retentionMs &&
+        currentTrainNos.has(entry.train_no) &&
+        detailData?.length
       ) {
-        previousStopped.set(entry.train_no, entry);
+        this.trainDetailList.push({
+          train_no: entry.train_no,
+          station_train_codes:
+            this.trainNoToStationCodes.get(entry.train_no) ??
+            entry.station_train_codes,
+          data: detailData,
+        });
+        resumedStopped.add(entry.train_no);
+        this.trainDetailReusedCount++;
+      } else if (
+        stoppedAge >= 0 &&
+        stoppedAge < retentionMs &&
+        !currentTrainNos.has(entry.train_no)
+      ) {
+        previousStopped.set(entry.train_no, {
+          ...entry,
+          ...(detailData ? { data: detailData } : {}),
+        });
       }
     }
 
@@ -481,9 +525,10 @@ class Spider {
               .join("/")
           : "";
         if (
-          !previousCodes ||
-          previousCodesKey !== currentCodes ||
-          !previousDetails.has(trainNo)
+          !resumedStopped.has(trainNo) &&
+          (!previousCodes ||
+            previousCodesKey !== currentCodes ||
+            !previousDetails.has(trainNo))
         ) {
           changedTrainNos.add(trainNo);
         }
@@ -493,10 +538,12 @@ class Spider {
     const shouldRefreshAll =
       !previousData || changedTrainNos.size > 300;
     this.trainDetailRefreshTrainNos = shouldRefreshAll
-      ? currentTrainNos
+      ? new Set(
+          [...currentTrainNos].filter((trainNo) => !resumedStopped.has(trainNo)),
+        )
       : new Set(
           [...changedTrainNos].filter((trainNo) =>
-            currentTrainNos.has(trainNo),
+            currentTrainNos.has(trainNo) && !resumedStopped.has(trainNo),
           ),
         );
 
@@ -531,6 +578,7 @@ class Spider {
     }
 
     for (const train of this.trainListFilteredByTrainNo) {
+      if (resumedStopped.has(train.train_no)) continue;
       if (this.trainDetailRefreshTrainNos.has(train.train_no)) continue;
       const previousDetail = previousDetails.get(train.train_no);
       if (!previousDetail) continue;
@@ -553,7 +601,36 @@ class Spider {
     if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true });
     fs.writeFileSync(
       path.join(distDir, "stopped.json"),
-      JSON.stringify(this.stoppedTrainDetails, null, 2),
+      JSON.stringify(
+        this.stoppedTrainDetails.map(
+          ({ train_no, station_train_codes, stopped_at }) => ({
+            train_no,
+            station_train_codes,
+            stopped_at,
+          }),
+        ),
+        null,
+        2,
+      ),
+      "utf-8",
+    );
+    fs.writeFileSync(
+      path.join(distDir, "stopped_detail.json"),
+      JSON.stringify(
+        this.stoppedTrainDetails.flatMap((entry) =>
+          entry.data
+            ? [
+                {
+                  train_no: entry.train_no,
+                  station_train_codes: entry.station_train_codes,
+                  data: entry.data,
+                },
+              ]
+            : [],
+        ),
+        null,
+        2,
+      ),
       "utf-8",
     );
   };
@@ -831,17 +908,25 @@ class Spider {
     const previousTrainNos = new Set(
       (this.previousReleaseData?.trainList ?? []).map((train) => train.train_no),
     );
+    const retentionMs = 14 * 24 * 60 * 60 * 1000;
+    for (const stoppedTrain of this.previousReleaseData?.stoppedTrains ?? []) {
+      const stoppedAge = Date.now() - Date.parse(stoppedTrain.stopped_at);
+      if (stoppedAge >= 0 && stoppedAge < retentionMs) {
+        previousTrainNos.add(stoppedTrain.train_no);
+      }
+    }
     const newTrainNos = new Set(
       [...this.trainListFilteredByTrainNo]
         .map((train) => train.train_no)
         .filter((trainNo) => !previousTrainNos.has(trainNo)),
     );
-    this.newTrainList = Array.from(this.trainList).filter((train) =>
+    this.newTrainNos = newTrainNos;
+    const newTrainList = Array.from(this.trainList).filter((train) =>
       newTrainNos.has(train.train_no),
     );
     fs.writeFileSync(
       path.join(distDir, "new.json"),
-      JSON.stringify(this.newTrainList, null, 2),
+      JSON.stringify(newTrainList, null, 2),
       "utf-8",
     );
     console.log(`[新增] 本次新增 ${newTrainNos.size} 个 train_no`);
@@ -969,6 +1054,17 @@ class Spider {
     fs.writeFileSync(
       path.join(distDir, `train_detail_${this.targetDate}.json`),
       JSON.stringify(this.trainDetailList, null, 2),
+      "utf-8",
+    );
+    fs.writeFileSync(
+      path.join(distDir, "new_detail.json"),
+      JSON.stringify(
+        this.trainDetailList.filter((entry) =>
+          this.newTrainNos.has(entry.train_no),
+        ),
+        null,
+        2,
+      ),
       "utf-8",
     );
     this.writeStoppedTrainDetails();

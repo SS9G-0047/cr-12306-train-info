@@ -8,7 +8,7 @@
 - **并发控制**：车次详情查询通过任务调度器 `TaskScheduler` 自适应调整并发（范围 2 ~ 6），成功率高自动提速，失败率高自动降速，任务启动随机延迟降低被识别概率
 - **失败重试**：请求失败会进入失败队列，在主抓取结束后按轮重试，最多 5 轮
 - **车次详情增量更新**：先读取当前仓库最近的 `data-YYYYMMDD` Release，与本次车次列表按 `train_no` 和站点车次比较；变化不超过 300 个时仅重新查询变化车次，超过 300 个时全量重抓。没有历史数据时也会全量抓取
-- **停运车次保留**：从本次列表消失的车次会从活动详情 JSON 移除并写入 `stopped.json`；两周内重新出现时恢复为活动车次，连续两周未出现则从 `stopped.json` 永久删除
+- **停运车次保留**：从本次列表消失的车次会从活动详情 JSON 移除，车次信息写入 `stopped.json`、详情写入 `stopped_detail.json`；两周内重新出现时直接复用已保存详情，连续两周未出现则从停运文件永久删除
 - **车次详情最终失败补偿**：当车次详情接口在重试结束后仍失败，会尝试从 HerbertHe 仓库前一日 Release 的 `train_detail_YYYYMMDD.json` 拉取数据，按 `train_no` 相同进行补偿回填（补偿日口径为「当前日期 + 13 天」的前一日，即 `targetDate - 1 day`）
 - **代理池优化**：动态淘汰连接失败/超时的代理，只移除真正失效的代理，保持代理池质量；不同请求使用随机浏览器 User-Agent 降低被拦截概率
 - **空结果重试**：空响应会重试确认，避免因临时限流导致的数据丢失
@@ -16,10 +16,11 @@
   - 车次列表 JSON：`dist/train_list_YYYYMMDD.json`
   - 车次列表 Markdown：`dist/train_list_YYYYMMDD.md`
   - 相较最近 Release 新增的车次：`dist/new.json`（按 `train_no` 比较，包含该车号对应的站点车次记录）
+  - 新增车次详情：`dist/new_detail.json`
 - **车次详情抓取与输出**（按去重后的车号逐个请求、站点名自动去空格）：
   - 车次详情 JSON：`dist/train_detail_YYYYMMDD.json`
   - 车次详情 Markdown：`dist/train_detail_YYYYMMDD.md`
-- **停运车次输出**：`dist/stopped.json`（保留消失未满两周的车次详情）
+- **停运车次输出**：`dist/stopped.json`（停运车次及停运时间）、`dist/stopped_detail.json`（对应详情）
 - **运行报告**：
   - GitHub Pages：`dist/README.md`
   - 统计摘要：`dist/summary.json`（用于 GitHub Action 写入 release 描述）
