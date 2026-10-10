@@ -1,0 +1,23 @@
+{
+  "date": "2026-10-23",
+  "all12306": {
+    "successfulHttpResponses": 592,
+    "entriesInPermanentFailQueue": 0,
+    "recordSum": 592
+  },
+  "trainList": {
+    "requested": 350,
+    "success": 350,
+    "failed": 0
+  },
+  "trainDetail": {
+    "requested": 242,
+    "success": 242,
+    "failed": 0,
+    "compensated": 0,
+    "reusedFromPreviousRelease": 11862,
+    "plannedDistinctTrainNumbers": 12104,
+    "distinctTrainsFilledByApi": 242,
+    "distinctTrainsStillMissingAfterCompensation": 0
+  }
+}
