@@ -65,6 +65,11 @@ jobs:
         id: summary
         run: |
           if [ -f dist/summary.json ]; then
+            if jq -e '.fullRefresh == true' dist/summary.json >/dev/null; then
+              echo "RELEASE_MODE=全量抓取（上传全部 JSON）" >> $GITHUB_ENV
+            else
+              echo "RELEASE_MODE=增量抓取（仅上传新增和停运 JSON）" >> $GITHUB_ENV
+            fi
             echo "LIST_REQ=$(jq -r '.trainList.requested // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "LIST_SUCCESS=$(jq -r '.trainList.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
             echo "LIST_FAILED=$(jq -r '.trainList.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
@@ -82,13 +87,40 @@ jobs:
             done
           fi
 
-      - name: Create GitHub Release and upload JSON/MD assets
+      - name: Select JSON assets for Release
+        id: release-assets
+        run: |
+          if jq -e '.fullRefresh == true' dist/summary.json >/dev/null; then
+            echo "Full refresh: uploading all JSON assets"
+            FILES=$(find dist -maxdepth 1 -type f -name '*.json' -print | sort)
+          else
+            echo "Incremental refresh: uploading only new/stopped JSON assets"
+            FILES=""
+            for FILE in \
+              dist/new.json \
+              dist/new_detail.json \
+              dist/stopped.json \
+              dist/stopped_detail.json; do
+              if [ ! -f "$FILE" ]; then
+                echo "Required release asset missing: $FILE" >&2
+                exit 1
+              fi
+              FILES="${FILES}${FILE}"$'\n'
+            done
+          fi
+          {
+            echo "files<<EOF"
+            printf '%s\n' "$FILES"
+            echo "EOF"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release and upload selected JSON assets
         uses: softprops/action-gh-release@v2
         with:
           tag_name: data-${{ env.TARGET_DATE }}
           name: 车次数据 ${{ env.TARGET_DATE }}
           body: |
-            车次列表与车次详情，对应日期 ${{ env.TARGET_DATE }}。
+            车次列表与车次详情，对应日期 ${{ env.TARGET_DATE }}。发布模式：${{ env.RELEASE_MODE }}。
             ### 车次列表（12306 search 接口）
             | 指标 | 数值 |
             | --- | --- |
@@ -110,14 +142,9 @@ jobs:
             | 接口拉回条数 | ${{ env.DETAIL_ROWS_API }} |
             | 补偿后仍缺条数 | ${{ env.DETAIL_ROWS_MISSING }} |
             ### 文件说明
-            - train_list_${{ env.TARGET_DATE }}.json / .md 车次列表
-            - new.json / new_detail.json 相较最近 Release 新增的车次列表及详情
-            - train_detail_${{ env.TARGET_DATE }}.json / .md 车次详情（全部）
-            - train_detail_车次等级_${{ env.TARGET_DATE }}.json / .md 按 G、D、C 等等级分文件
-            - stopped.json / stopped_detail.json 两周内未重新出现的停运车次及详情
-          files: |
-            dist/*.json
-            dist/*.md
+            - 全量抓取时包含车次列表和详情全量 JSON（含按车次类型及数字车次分组文件）
+            - 增量抓取时仅包含 new.json、new_detail.json、stopped.json、stopped_detail.json，其中 new 文件包含新增或车次代码变化
+          files: ${{ steps.release-assets.outputs.files }}
           skip_if_tag_exists: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

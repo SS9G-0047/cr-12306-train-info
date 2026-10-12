@@ -74,9 +74,12 @@ class Spider {
    */
   private trainDetailList: TrainDetailEntry[] = [];
   private stoppedTrainDetails: StoppedTrainEntry[] = [];
+  private stopTempTrainList: ITrain[] = [];
+  private stopTempTrainDetails: TrainDetailEntry[] = [];
   private previousReleaseData: PreviousReleaseData | null = null;
   private trainDetailReusedCount = 0;
   private trainDetailRefreshTrainNos = new Set<string>();
+  private isFullRefresh = false;
 
   private trainDetailTotal = 0;
   private trainDetailSuccessCount = 0;
@@ -318,68 +321,128 @@ class Spider {
       headers.Authorization = `Bearer ${process.env.GITHUB_TOKEN}`;
     }
 
-    const releasesResponse = await fetch(
-      `https://api.github.com/repos/${repository}/releases?per_page=100`,
-      { headers },
-    );
-    if (!releasesResponse.ok) {
-      if (releasesResponse.status === 404) {
-        console.log("[Release] 当前仓库没有可用 Release，将全量抓取详情");
-        return null;
-      }
-      throw new Error(
-        `[Release] 获取当前仓库 Release 失败: HTTP ${releasesResponse.status}`,
+    const releasesUnknown: unknown[] = [];
+    let releasePage = 1;
+    let hasFullSnapshot = false;
+    while (!hasFullSnapshot) {
+      const releasesResponse = await fetch(
+        `https://api.github.com/repos/${repository}/releases?per_page=100&page=${releasePage}`,
+        { headers },
       );
+      if (!releasesResponse.ok) {
+        if (releasesResponse.status === 404 && releasePage === 1) {
+          console.log("[Release] 当前仓库没有可用 Release，将全量抓取详情");
+          return null;
+        }
+        throw new Error(
+          `[Release] 获取当前仓库第 ${releasePage} 页 Release 失败: HTTP ${releasesResponse.status}`,
+        );
+      }
+
+      const pageUnknown: unknown = await releasesResponse.json();
+      if (!Array.isArray(pageUnknown)) {
+        throw new Error("[Release] GitHub Release 响应格式无效");
+      }
+      releasesUnknown.push(...pageUnknown);
+      const pageData = pageUnknown as Array<{
+        tag_name?: unknown;
+        assets?: unknown;
+      }>;
+      hasFullSnapshot = pageData.some((release) => {
+        if (
+          typeof release?.tag_name !== "string" ||
+          !/^data-\d{8}$/.test(release.tag_name) ||
+          !Array.isArray(release.assets)
+        ) {
+          return false;
+        }
+        return (
+          release.assets.some(
+            (asset: { name?: unknown }) =>
+              typeof asset?.name === "string" &&
+              /^train_list_\d{8}\.json$/.test(asset.name),
+          ) &&
+          release.assets.some(
+            (asset: { name?: unknown }) =>
+              typeof asset?.name === "string" &&
+              /^train_detail_\d{8}\.json$/.test(asset.name),
+          )
+        );
+      });
+      if (pageUnknown.length < 100) break;
+      releasePage++;
     }
 
-    const releasesUnknown: unknown = await releasesResponse.json();
-    if (!Array.isArray(releasesUnknown)) {
-      throw new Error("[Release] GitHub Release 响应格式无效");
-    }
-    const release = releasesUnknown.find(
-      (item: { tag_name?: unknown }) =>
+    type ReleaseAsset = {
+      name?: unknown;
+      browser_download_url?: unknown;
+    };
+    type ReleaseRecord = {
+      tag_name: string;
+      assets: ReleaseAsset[];
+    };
+    const dataReleases = (releasesUnknown as Array<{
+      tag_name?: unknown;
+      assets?: unknown;
+    }>).filter(
+      (item): item is ReleaseRecord =>
         typeof item?.tag_name === "string" &&
-        /^data-\d{8}$/.test(item.tag_name),
-    ) as { tag_name: string; assets?: unknown } | undefined;
-    if (!release) {
+        /^data-\d{8}$/.test(item.tag_name) &&
+        Array.isArray(item.assets),
+    );
+    if (dataReleases.length === 0) {
       console.log("[Release] 尚无每日数据 Release，将全量抓取详情");
       return null;
     }
-    if (!Array.isArray(release.assets)) {
-      throw new Error(`[Release] ${release.tag_name} 缺少有效 assets 列表`);
-    }
 
-    const assets = release.assets as Array<{
-      name?: unknown;
-      browser_download_url?: unknown;
-    }>;
-    const assetUrl = (name: string): string | undefined => {
-      const asset = assets.find((item) => item?.name === name);
+    const assetUrl = (
+      release: ReleaseRecord,
+      name: string,
+    ): string | undefined => {
+      const asset = release.assets.find((item) => item?.name === name);
       return typeof asset?.browser_download_url === "string"
         ? asset.browser_download_url
         : undefined;
     };
-    const trainListAsset = assets.find(
-      (item) =>
-        typeof item?.name === "string" &&
-        /^train_list_\d{8}\.json$/.test(item.name),
-    );
-    const trainDetailAsset = assets.find(
-      (item) =>
-        typeof item?.name === "string" &&
-        /^train_detail_\d{8}\.json$/.test(item.name),
-    );
-    const trainListUrl =
-      typeof trainListAsset?.name === "string"
-        ? assetUrl(trainListAsset.name)
+    const assetNamedLike = (
+      release: ReleaseRecord,
+      pattern: RegExp,
+    ): string | undefined => {
+      const asset = release.assets.find(
+        (item) => typeof item?.name === "string" && pattern.test(item.name),
+      );
+      return typeof asset?.name === "string"
+        ? assetUrl(release, asset.name)
         : undefined;
-    const trainDetailUrl =
-      typeof trainDetailAsset?.name === "string"
-        ? assetUrl(trainDetailAsset.name)
-        : undefined;
+    };
+    const isFullSnapshot = (release: ReleaseRecord): boolean =>
+      Boolean(
+        assetNamedLike(release, /^train_list_\d{8}\.json$/) &&
+          assetNamedLike(release, /^train_detail_\d{8}\.json$/),
+      );
+    const fullReleaseIndex = dataReleases.findIndex(isFullSnapshot);
+    if (fullReleaseIndex < 0) {
+      throw new Error(
+        "[Release] 最近的每日 Release 中没有完整车次快照，无法进行安全增量比较",
+      );
+    }
+    const baselineRelease = dataReleases[fullReleaseIndex];
+    const latestRelease = dataReleases[0];
+    const stateRelease =
+      dataReleases.find(
+        (release) => assetUrl(release, "stopped.json") !== undefined,
+      ) ?? baselineRelease;
+    const trainListUrl = assetNamedLike(
+      baselineRelease,
+      /^train_list_\d{8}\.json$/,
+    );
+    const trainDetailUrl = assetNamedLike(
+      baselineRelease,
+      /^train_detail_\d{8}\.json$/,
+    );
     if (!trainListUrl || !trainDetailUrl) {
       throw new Error(
-        `[Release] ${release.tag_name} 缺少车次列表或详情 JSON`,
+        `[Release] ${baselineRelease.tag_name} 缺少完整车次快照资产`,
       );
     }
 
@@ -398,43 +461,56 @@ class Spider {
       }
       return response.json();
     };
-    const stoppedUrl = assetUrl("stopped.json");
-    const stoppedDetailUrl = assetUrl("stopped_detail.json");
+    const baselineStoppedUrl = assetUrl(baselineRelease, "stopped.json");
+    const stoppedUrl = assetUrl(stateRelease, "stopped.json");
+    const stoppedDetailUrl = assetUrl(stateRelease, "stopped_detail.json");
     const [
-      trainListUnknown,
-      trainDetailsUnknown,
-      stoppedUnknown,
-      stoppedDetailsUnknown,
+      trainListPayload,
+      trainDetailsPayload,
+      baselineStoppedPayload,
+      stoppedPayload,
+      stoppedDetailsPayload,
     ] =
       await Promise.all([
         downloadJson(trainListUrl),
         downloadJson(trainDetailUrl),
+        baselineStoppedUrl
+          ? downloadJson(baselineStoppedUrl)
+          : Promise.resolve([]),
         stoppedUrl ? downloadJson(stoppedUrl) : Promise.resolve([]),
         stoppedDetailUrl ? downloadJson(stoppedDetailUrl) : Promise.resolve([]),
       ]);
 
     if (
-      !Array.isArray(trainListUnknown) ||
-      !Array.isArray(trainDetailsUnknown) ||
-      !Array.isArray(stoppedUnknown) ||
-      !Array.isArray(stoppedDetailsUnknown)
+      !Array.isArray(trainListPayload) ||
+      !Array.isArray(trainDetailsPayload) ||
+      !Array.isArray(baselineStoppedPayload) ||
+      !Array.isArray(stoppedPayload) ||
+      !Array.isArray(stoppedDetailsPayload)
     ) {
-      throw new Error(`[Release] ${release.tag_name} 中的 JSON 资产格式无效`);
+      throw new Error(`[Release] ${baselineRelease.tag_name} 中的 JSON 资产格式无效`);
     }
     if (
-      !trainListUnknown.every(
+      !trainListPayload.every(
         (train) =>
           typeof train?.train_no === "string" &&
           typeof train?.station_train_code === "string",
       ) ||
-      !trainDetailsUnknown.every(
+      !trainDetailsPayload.every(
         (entry) =>
           typeof entry?.train_no === "string" &&
           typeof entry?.station_train_codes === "string" &&
           Array.isArray(entry?.data) &&
           entry.data.length > 0,
       ) ||
-      !stoppedUnknown.every(
+      !baselineStoppedPayload.every(
+        (entry) =>
+          typeof entry?.train_no === "string" &&
+          typeof entry?.station_train_codes === "string" &&
+          typeof entry?.stopped_at === "string" &&
+          Number.isFinite(Date.parse(entry.stopped_at)),
+      ) ||
+      !stoppedPayload.every(
         (entry) =>
           typeof entry?.train_no === "string" &&
           typeof entry?.station_train_codes === "string" &&
@@ -442,7 +518,7 @@ class Spider {
           Number.isFinite(Date.parse(entry.stopped_at)) &&
           (entry.data === undefined || Array.isArray(entry.data)),
       ) ||
-      !stoppedDetailsUnknown.every(
+      !stoppedDetailsPayload.every(
         (entry) =>
           typeof entry?.train_no === "string" &&
           typeof entry?.station_train_codes === "string" &&
@@ -450,16 +526,129 @@ class Spider {
           entry.data.length > 0,
       )
     ) {
-      throw new Error(`[Release] ${release.tag_name} 中的车次记录格式无效`);
+      throw new Error(`[Release] ${baselineRelease.tag_name} 中的车次记录格式无效`);
     }
+
+    const trainListByKey = new Map<string, ITrain>();
+    for (const train of trainListPayload as ITrain[]) {
+      trainListByKey.set(`${train.train_no}\0${train.station_train_code}`, train);
+    }
+    const trainDetailsByNo = new Map<string, TrainDetailEntry>();
+    for (const entry of trainDetailsPayload as TrainDetailEntry[]) {
+      trainDetailsByNo.set(entry.train_no, entry);
+    }
+    let previousStoppedNos = new Set(
+      (baselineStoppedPayload as StoppedTrainEntry[]).map(
+        (entry) => entry.train_no,
+      ),
+    );
+
+    for (const release of dataReleases.slice(0, fullReleaseIndex).reverse()) {
+      const newListUrl = assetUrl(release, "new.json");
+      const newDetailsUrl = assetUrl(release, "new_detail.json");
+      const releaseStoppedUrl = assetUrl(release, "stopped.json");
+      if (Boolean(newListUrl) !== Boolean(newDetailsUrl)) {
+        throw new Error(`[Release] ${release.tag_name} 缺少成对的增量 JSON`);
+      }
+      const [newList, newDetails, releaseStopped] = await Promise.all([
+        newListUrl ? downloadJson(newListUrl) : Promise.resolve([]),
+        newDetailsUrl ? downloadJson(newDetailsUrl) : Promise.resolve([]),
+        releaseStoppedUrl
+          ? downloadJson(releaseStoppedUrl)
+          : Promise.resolve(null),
+      ]);
+      if (
+        !Array.isArray(newList) ||
+        !newList.every(
+          (train) =>
+            typeof train?.train_no === "string" &&
+            typeof train?.station_train_code === "string",
+        ) ||
+        !Array.isArray(newDetails) ||
+        !newDetails.every(
+          (entry) =>
+            typeof entry?.train_no === "string" &&
+            typeof entry?.station_train_codes === "string" &&
+            Array.isArray(entry?.data) &&
+            entry.data.length > 0,
+        ) ||
+        (releaseStopped !== null &&
+          (!Array.isArray(releaseStopped) ||
+            !releaseStopped.every(
+              (entry) =>
+                typeof entry?.train_no === "string" &&
+                typeof entry?.stopped_at === "string" &&
+                Number.isFinite(Date.parse(entry.stopped_at)),
+            )))
+      ) {
+        throw new Error(`[Release] ${release.tag_name} 的增量资产格式无效`);
+      }
+
+      const updatedTrainNos = new Set(
+        (newList as ITrain[]).map((train) => train.train_no),
+      );
+      for (const trainNo of updatedTrainNos) {
+        for (const key of trainListByKey.keys()) {
+          if (key.startsWith(`${trainNo}\0`)) trainListByKey.delete(key);
+        }
+        trainDetailsByNo.delete(trainNo);
+      }
+      for (const train of newList as ITrain[]) {
+        trainListByKey.set(
+          `${train.train_no}\0${train.station_train_code}`,
+          train,
+        );
+      }
+      for (const entry of newDetails as TrainDetailEntry[]) {
+        trainDetailsByNo.set(entry.train_no, entry);
+      }
+
+      if (Array.isArray(releaseStopped)) {
+        const currentStoppedNos = new Set(
+          (releaseStopped as StoppedTrainEntry[]).map(
+            (entry) => entry.train_no,
+          ),
+        );
+        for (const trainNo of previousStoppedNos) {
+          if (
+            !currentStoppedNos.has(trainNo) &&
+            !updatedTrainNos.has(trainNo)
+          ) {
+            for (const key of trainListByKey.keys()) {
+              if (key.startsWith(`${trainNo}\0`)) trainListByKey.delete(key);
+            }
+            trainDetailsByNo.delete(trainNo);
+          }
+        }
+        for (const trainNo of currentStoppedNos) {
+          for (const key of trainListByKey.keys()) {
+            if (key.startsWith(`${trainNo}\0`)) trainListByKey.delete(key);
+          }
+          trainDetailsByNo.delete(trainNo);
+        }
+        previousStoppedNos = currentStoppedNos;
+      }
+    }
+
+    const stoppedTrains = stoppedPayload as StoppedTrainEntry[];
+    const stoppedTrainNos = new Set(
+      stoppedTrains.map((entry) => entry.train_no),
+    );
+    const trainList = [...trainListByKey.values()].filter(
+      (train) => !stoppedTrainNos.has(train.train_no),
+    );
+    const trainDetails = [...trainDetailsByNo.values()].filter(
+      (entry) => !stoppedTrainNos.has(entry.train_no),
+    );
+    const stoppedDetails = stoppedDetailsPayload as TrainDetailEntry[];
     console.log(
-      `[Release] 已加载基线 ${release.tag_name}: ${trainListUnknown.length} 条车次列表, ${trainDetailsUnknown.length} 条详情, ${stoppedUnknown.length} 条停运记录, ${stoppedDetailsUnknown.length} 条停运详情`,
+      `[Release] 已加载完整基线 ${baselineRelease.tag_name}，应用至 ${latestRelease.tag_name} 的 ${fullReleaseIndex} 个增量 Release：${trainList.length} 条车次列表, ${trainDetails.length} 条详情；使用 ${stateRelease.tag_name} 的停运状态 ${stoppedTrains.length} 条 / 详情 ${stoppedDetails.length} 条`,
     );
     return {
-      trainList: trainListUnknown as ITrain[],
-      trainDetails: trainDetailsUnknown as TrainDetailEntry[],
-      stoppedTrains: stoppedUnknown as StoppedTrainEntry[],
-      stoppedDetails: stoppedDetailsUnknown as TrainDetailEntry[],
+      trainList,
+      trainDetails,
+      stoppedTrains,
+      stoppedDetails,
     };
   };
 
@@ -489,6 +678,12 @@ class Spider {
     }
     for (const entry of previousData?.stoppedDetails ?? []) {
       previousStoppedDetails.set(entry.train_no, entry);
+    }
+    const previousTrainListByNo = new Map<string, ITrain[]>();
+    for (const train of previousData?.trainList ?? []) {
+      const entries = previousTrainListByNo.get(train.train_no) ?? [];
+      entries.push(train);
+      previousTrainListByNo.set(train.train_no, entries);
     }
 
     const now = new Date();
@@ -529,7 +724,14 @@ class Spider {
     const changedTrainNos = new Set<string>();
     if (previousData) {
       for (const trainNo of previousTrainCodes.keys()) {
-        if (!currentTrainNos.has(trainNo)) changedTrainNos.add(trainNo);
+        if (!currentTrainNos.has(trainNo)) {
+          changedTrainNos.add(trainNo);
+          this.stopTempTrainList.push(
+            ...(previousTrainListByNo.get(trainNo) ?? []),
+          );
+          const detail = previousDetails.get(trainNo);
+          if (detail) this.stopTempTrainDetails.push(detail);
+        }
       }
       for (const [trainNo, currentCodes] of this.trainNoToStationCodes) {
         const previousCodes = previousTrainCodes.get(trainNo);
@@ -568,6 +770,7 @@ class Spider {
     const shouldRefreshAll =
       !previousData ||
       trainCodeChangeRate >= FULL_REFRESH_TRAIN_CODE_CHANGE_RATE;
+    this.isFullRefresh = shouldRefreshAll;
     this.trainDetailRefreshTrainNos = shouldRefreshAll
       ? new Set(
           [...currentTrainNos].filter((trainNo) => !resumedStopped.has(trainNo)),
@@ -621,7 +824,7 @@ class Spider {
     }
 
     console.log(
-      `[停运] 当前停运记录 ${this.stoppedTrainDetails.length} 条（14 天后自动清理）`,
+      `[停运] 本次新转停运 ${this.stopTempTrainList.length} 条；保留中的停运记录 ${this.stoppedTrainDetails.length} 条（14 天后自动清理）`,
     );
   };
 
@@ -660,6 +863,21 @@ class Spider {
         null,
         2,
       ),
+      "utf-8",
+    );
+  };
+
+  private writeStopTempFiles = (): void => {
+    const distDir = path.join(process.cwd(), "dist");
+    if (!fs.existsSync(distDir)) fs.mkdirSync(distDir, { recursive: true });
+    fs.writeFileSync(
+      path.join(distDir, "stop_temp.json"),
+      JSON.stringify(this.stopTempTrainList, null, 2),
+      "utf-8",
+    );
+    fs.writeFileSync(
+      path.join(distDir, "stop_temp_detail.json"),
+      JSON.stringify(this.stopTempTrainDetails, null, 2),
       "utf-8",
     );
   };
@@ -934,21 +1152,26 @@ class Spider {
       "utf-8",
     );
 
-    const previousTrainNos = new Set(
-      (this.previousReleaseData?.trainList ?? []).map((train) => train.train_no),
-    );
-    const retentionMs = 14 * 24 * 60 * 60 * 1000;
-    for (const stoppedTrain of this.previousReleaseData?.stoppedTrains ?? []) {
-      const stoppedAge = Date.now() - Date.parse(stoppedTrain.stopped_at);
-      if (stoppedAge >= 0 && stoppedAge < retentionMs) {
-        previousTrainNos.add(stoppedTrain.train_no);
+    const previousCodesByNo = new Map<string, Set<string>>();
+    for (const train of this.previousReleaseData?.trainList ?? []) {
+      const codes = previousCodesByNo.get(train.train_no) ?? new Set<string>();
+      codes.add(train.station_train_code);
+      previousCodesByNo.set(train.train_no, codes);
+    }
+    const newTrainNos = new Set<string>();
+    for (const [trainNo, currentCodes] of this.trainNoToStationCodes) {
+      const previousCodes = previousCodesByNo.get(trainNo);
+      const previousCodesKey = previousCodes
+        ? [...previousCodes]
+            .sort((a, b) =>
+              a.localeCompare(b, void 0, { numeric: true }),
+            )
+            .join("/")
+        : "";
+      if (!previousCodes || previousCodesKey !== currentCodes) {
+        newTrainNos.add(trainNo);
       }
     }
-    const newTrainNos = new Set(
-      [...this.trainListFilteredByTrainNo]
-        .map((train) => train.train_no)
-        .filter((trainNo) => !previousTrainNos.has(trainNo)),
-    );
     this.newTrainNos = newTrainNos;
     const newTrainList = Array.from(this.trainList).filter((train) =>
       newTrainNos.has(train.train_no),
@@ -958,7 +1181,7 @@ class Spider {
       JSON.stringify(newTrainList, null, 2),
       "utf-8",
     );
-    console.log(`[新增] 本次新增 ${newTrainNos.size} 个 train_no`);
+    console.log(`[增量资产] 本次新增或车次代码变更 ${newTrainNos.size} 个 train_no`);
   };
 
   /**
@@ -1017,7 +1240,9 @@ class Spider {
    * 从站点车次代码取车次等级（首字母），如 G123 -> G
    */
   private getTrainClass = (stationTrainCode: string): string =>
-    (stationTrainCode || "").charAt(0).toUpperCase() || "OTHER";
+    /^\d/.test(stationTrainCode)
+      ? "NUMERIC"
+      : (stationTrainCode || "").charAt(0).toUpperCase() || "OTHER";
 
   /**
    * 根据 trainDetailList 生成车次详情 markdown 表格到 dist/train_detail.md
@@ -1097,6 +1322,7 @@ class Spider {
       "utf-8",
     );
     this.writeStoppedTrainDetails();
+    this.writeStopTempFiles();
 
     // 按车次等级分组
     const detailByClass = new Map<
@@ -1271,6 +1497,7 @@ class Spider {
         distinctTrainsStillMissingAfterCompensation:
           this.trainDetailFailedTrainNos.length,
       },
+      fullRefresh: this.isFullRefresh,
     };
     fs.writeFileSync(
       path.join(distDir, "summary.json"),
