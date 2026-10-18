@@ -24,7 +24,7 @@
 - **停运车次输出**：`dist/stopped.json`（停运车次及停运时间）、`dist/stopped_detail.json`（对应详情）
 - **本次转停运输出**：`dist/stop_temp.json`（上次正常开行的车次列表记录）、`dist/stop_temp_detail.json`（对应经停详情）
 - **数字车次详情**：所有纯数字车次统一写入 `dist/train_detail_NUMERIC_YYYYMMDD.json` / `.md`
-- **Release 文件策略**：全量抓取时上传全部 JSON；增量抓取时只上传 `new.json`、`new_detail.json`、`stopped.json`、`stopped_detail.json`
+- **Release 文件策略**：全量抓取时上传全部 JSON；增量抓取时上传新增、停运及本次新转停运文件，包括 `new.json`、`new_detail.json`、`stopped.json`、`stopped_detail.json`、`stop_temp.json`、`stop_temp_detail.json`
 - **运行报告**：
   - GitHub Pages：`dist/README.md`
   - 统计摘要：`dist/summary.json`（用于 GitHub Action 写入 release 描述）

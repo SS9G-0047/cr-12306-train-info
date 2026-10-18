@@ -94,13 +94,15 @@ jobs:
             echo "Full refresh: uploading all JSON assets"
             FILES=$(find dist -maxdepth 1 -type f -name '*.json' -print | sort)
           else
-            echo "Incremental refresh: uploading only new/stopped JSON assets"
+            echo "Incremental refresh: uploading new/stopped JSON assets"
             FILES=""
             for FILE in \
               dist/new.json \
               dist/new_detail.json \
               dist/stopped.json \
-              dist/stopped_detail.json; do
+              dist/stopped_detail.json \
+              dist/stop_temp.json \
+              dist/stop_temp_detail.json; do
               if [ ! -f "$FILE" ]; then
                 echo "Required release asset missing: $FILE" >&2
                 exit 1
@@ -143,7 +145,7 @@ jobs:
             | 补偿后仍缺条数 | ${{ env.DETAIL_ROWS_MISSING }} |
             ### 文件说明
             - 全量抓取时包含车次列表和详情全量 JSON（含按车次类型及数字车次分组文件）
-            - 增量抓取时仅包含 new.json、new_detail.json、stopped.json、stopped_detail.json，其中 new 文件包含新增或车次代码变化
+            - 增量抓取时包含 new.json、new_detail.json、stopped.json、stopped_detail.json、stop_temp.json、stop_temp_detail.json
           files: ${{ steps.release-assets.outputs.files }}
           skip_if_tag_exists: true
         env:
