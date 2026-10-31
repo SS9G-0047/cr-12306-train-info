@@ -1,0 +1,5274 @@
+[
+  {
+    "date": "20261113",
+    "from_station": "拉萨",
+    "station_train_code": "Z321",
+    "to_station": "成都龙泉驿",
+    "total_num": "9",
+    "train_no": "880000Z32420"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都龙泉驿",
+    "station_train_code": "Z322",
+    "to_station": "拉萨",
+    "total_num": "8",
+    "train_no": "760000Z32220"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都龙泉驿",
+    "station_train_code": "Z323",
+    "to_station": "拉萨",
+    "total_num": "8",
+    "train_no": "760000Z32220"
+  },
+  {
+    "date": "20261113",
+    "from_station": "拉萨",
+    "station_train_code": "Z324",
+    "to_station": "成都龙泉驿",
+    "total_num": "9",
+    "train_no": "880000Z32420"
+  },
+  {
+    "date": "20261113",
+    "from_station": "乌鲁木齐",
+    "station_train_code": "Z382",
+    "to_station": "陇西",
+    "total_num": "10",
+    "train_no": "930000Z38209"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D901",
+    "to_station": "深圳北",
+    "total_num": "9",
+    "train_no": "240000D9011W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "D902",
+    "to_station": "北京西",
+    "total_num": "6",
+    "train_no": "6i0000D9021G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D903",
+    "to_station": "深圳北",
+    "total_num": "9",
+    "train_no": "240000D90320"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "D904",
+    "to_station": "北京西",
+    "total_num": "9",
+    "train_no": "6i0000D9041L"
+  },
+  {
+    "date": "20261113",
+    "from_station": "惠州北",
+    "station_train_code": "D911",
+    "to_station": "上海",
+    "total_num": "8",
+    "train_no": "6l0000D9110B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海",
+    "station_train_code": "D912",
+    "to_station": "惠州北",
+    "total_num": "7",
+    "train_no": "550000D91321"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海",
+    "station_train_code": "D913",
+    "to_station": "惠州北",
+    "total_num": "7",
+    "train_no": "550000D91321"
+  },
+  {
+    "date": "20261113",
+    "from_station": "惠州北",
+    "station_train_code": "D914",
+    "to_station": "上海",
+    "total_num": "8",
+    "train_no": "6l0000D9110B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太原南",
+    "station_train_code": "D915",
+    "to_station": "深圳坪山",
+    "total_num": "8",
+    "train_no": "270000D91820"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳坪山",
+    "station_train_code": "D916",
+    "to_station": "太原南",
+    "total_num": "9",
+    "train_no": "6j0000D91700"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳坪山",
+    "station_train_code": "D917",
+    "to_station": "太原南",
+    "total_num": "9",
+    "train_no": "6j0000D91700"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太原南",
+    "station_train_code": "D918",
+    "to_station": "深圳坪山",
+    "total_num": "8",
+    "train_no": "270000D91820"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D919",
+    "to_station": "南宁东",
+    "total_num": "9",
+    "train_no": "240000D9190B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南宁东",
+    "station_train_code": "D920",
+    "to_station": "北京西",
+    "total_num": "9",
+    "train_no": "710000D92007"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D921",
+    "to_station": "湛江西",
+    "total_num": "9",
+    "train_no": "240000D92132"
+  },
+  {
+    "date": "20261113",
+    "from_station": "湛江西",
+    "station_train_code": "D922",
+    "to_station": "北京西",
+    "total_num": "7",
+    "train_no": "6k0000D9220O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D923",
+    "to_station": "珠海",
+    "total_num": "7",
+    "train_no": "240000D9231V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "珠海",
+    "station_train_code": "D924",
+    "to_station": "北京西",
+    "total_num": "6",
+    "train_no": "6e0000D92411"
+  },
+  {
+    "date": "20261113",
+    "from_station": "潮汕",
+    "station_train_code": "D925",
+    "to_station": "北京西",
+    "total_num": "7",
+    "train_no": "6j0000D92508"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D926",
+    "to_station": "潮汕",
+    "total_num": "8",
+    "train_no": "240000D92729"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D927",
+    "to_station": "潮汕",
+    "total_num": "8",
+    "train_no": "240000D92729"
+  },
+  {
+    "date": "20261113",
+    "from_station": "潮汕",
+    "station_train_code": "D928",
+    "to_station": "北京西",
+    "total_num": "7",
+    "train_no": "6j0000D92508"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D931",
+    "to_station": "佛山西",
+    "total_num": "7",
+    "train_no": "5l0000D931M0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山西",
+    "station_train_code": "D932",
+    "to_station": "上海虹桥",
+    "total_num": "7",
+    "train_no": "700000D9330C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山西",
+    "station_train_code": "D933",
+    "to_station": "上海虹桥",
+    "total_num": "7",
+    "train_no": "700000D9330C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D934",
+    "to_station": "佛山西",
+    "total_num": "7",
+    "train_no": "5l0000D931M0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D935",
+    "to_station": "广州南",
+    "total_num": "5",
+    "train_no": "5l0000D935F8"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D936",
+    "to_station": "上海虹桥",
+    "total_num": "7",
+    "train_no": "6c0000D9371O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D937",
+    "to_station": "上海虹桥",
+    "total_num": "7",
+    "train_no": "6c0000D9371O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D938",
+    "to_station": "广州南",
+    "total_num": "5",
+    "train_no": "5l0000D935F8"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D939",
+    "to_station": "昆明南",
+    "total_num": "8",
+    "train_no": "240000D9391Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "D940",
+    "to_station": "北京西",
+    "total_num": "6",
+    "train_no": "800000D9400A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D941",
+    "to_station": "珠海",
+    "total_num": "8",
+    "train_no": "5l0000D94102"
+  },
+  {
+    "date": "20261113",
+    "from_station": "珠海",
+    "station_train_code": "D942",
+    "to_station": "上海虹桥",
+    "total_num": "9",
+    "train_no": "6e0000D9420Z"
+  },
+  {
+    "date": "20261113",
+    "from_station": "珠海",
+    "station_train_code": "D943",
+    "to_station": "上海虹桥",
+    "total_num": "9",
+    "train_no": "6e0000D9420Z"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "D944",
+    "to_station": "珠海",
+    "total_num": "8",
+    "train_no": "5l0000D94102"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨西",
+    "station_train_code": "D9131",
+    "to_station": "齐齐哈尔南",
+    "total_num": "3",
+    "train_no": "0h000D913121"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔南",
+    "station_train_code": "D9132",
+    "to_station": "哈尔滨",
+    "total_num": "5",
+    "train_no": "04000D91322B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨",
+    "station_train_code": "D9133",
+    "to_station": "齐齐哈尔南",
+    "total_num": "5",
+    "train_no": "01000D91333E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔南",
+    "station_train_code": "D9134",
+    "to_station": "哈尔滨",
+    "total_num": "5",
+    "train_no": "04000D91344X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨",
+    "station_train_code": "D9135",
+    "to_station": "齐齐哈尔南",
+    "total_num": "5",
+    "train_no": "01000D91352Y"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔南",
+    "station_train_code": "D9136",
+    "to_station": "哈尔滨",
+    "total_num": "3",
+    "train_no": "04000D91363Y"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨",
+    "station_train_code": "D9137",
+    "to_station": "齐齐哈尔南",
+    "total_num": "4",
+    "train_no": "01000D91372P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔南",
+    "station_train_code": "D9138",
+    "to_station": "哈尔滨西",
+    "total_num": "6",
+    "train_no": "04000D91383P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨西",
+    "station_train_code": "D9167",
+    "to_station": "七台河西",
+    "total_num": "7",
+    "train_no": "0h000D91672D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "七台河西",
+    "station_train_code": "D9168",
+    "to_station": "哈尔滨",
+    "total_num": "3",
+    "train_no": "03000D91682C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上饶",
+    "station_train_code": "D9181",
+    "to_station": "景德镇北",
+    "total_num": "3",
+    "train_no": "57000D918417"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "D9182",
+    "to_station": "上饶",
+    "total_num": "3",
+    "train_no": "57000D91821Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "D9183",
+    "to_station": "上饶",
+    "total_num": "3",
+    "train_no": "57000D91821Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上饶",
+    "station_train_code": "D9184",
+    "to_station": "景德镇北",
+    "total_num": "3",
+    "train_no": "57000D918417"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武平",
+    "station_train_code": "D9195",
+    "to_station": "福州",
+    "total_num": "9",
+    "train_no": "58000D91980F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D9197",
+    "to_station": "厦门北",
+    "total_num": "3",
+    "train_no": "58000D91970M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武平",
+    "station_train_code": "D9198",
+    "to_station": "福州",
+    "total_num": "9",
+    "train_no": "58000D91980F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D9585",
+    "to_station": "永安南",
+    "total_num": "5",
+    "train_no": "58000D95880W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "永安南",
+    "station_train_code": "D9586",
+    "to_station": "福州",
+    "total_num": "5",
+    "train_no": "4z000D95860P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "永安南",
+    "station_train_code": "D9587",
+    "to_station": "福州",
+    "total_num": "5",
+    "train_no": "4z000D95860P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D9588",
+    "to_station": "永安南",
+    "total_num": "5",
+    "train_no": "58000D95880W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门",
+    "station_train_code": "D9625",
+    "to_station": "诏安",
+    "total_num": "5",
+    "train_no": "58000D962543"
+  },
+  {
+    "date": "20261113",
+    "from_station": "九江",
+    "station_train_code": "D9629",
+    "to_station": "南昌西",
+    "total_num": "3",
+    "train_no": "57000D96290U"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "D9630",
+    "to_station": "九江",
+    "total_num": "3",
+    "train_no": "5u000D96300O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南宁东",
+    "station_train_code": "D9669",
+    "to_station": "北海",
+    "total_num": "4",
+    "train_no": "71000D9669A8"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北海",
+    "station_train_code": "D9670",
+    "to_station": "南宁东",
+    "total_num": "2",
+    "train_no": "73000D96703K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "D9888",
+    "to_station": "南昌",
+    "total_num": "2",
+    "train_no": "5u000D988804"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "D9927",
+    "to_station": "荔波",
+    "total_num": "2",
+    "train_no": "78000D99270D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "荔波",
+    "station_train_code": "D9928",
+    "to_station": "贵阳北",
+    "total_num": "2",
+    "train_no": "78000D99280G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "遵义",
+    "station_train_code": "D9935",
+    "to_station": "贵阳北",
+    "total_num": "2",
+    "train_no": "78000D993520"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "D9936",
+    "to_station": "遵义",
+    "total_num": "2",
+    "train_no": "78000D993650"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆西",
+    "station_train_code": "D9937",
+    "to_station": "贵阳北",
+    "total_num": "6",
+    "train_no": "77000D993709"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "D9938",
+    "to_station": "重庆西",
+    "total_num": "8",
+    "train_no": "78000D993803"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙岩",
+    "station_train_code": "D9959",
+    "to_station": "厦门北",
+    "total_num": "3",
+    "train_no": "5c000D995906"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门",
+    "station_train_code": "D9960",
+    "to_station": "龙岩",
+    "total_num": "5",
+    "train_no": "58000D99600S"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D9973",
+    "to_station": "平潭",
+    "total_num": "3",
+    "train_no": "58000D99730X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "平潭",
+    "station_train_code": "D9974",
+    "to_station": "福州",
+    "total_num": "4",
+    "train_no": "4z000D99740V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福鼎",
+    "station_train_code": "D9975",
+    "to_station": "福州",
+    "total_num": "6",
+    "train_no": "5n000D997506"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D9976",
+    "to_station": "福鼎",
+    "total_num": "4",
+    "train_no": "58000D99760Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔",
+    "station_train_code": "K47",
+    "to_station": "杭州",
+    "total_num": "37",
+    "train_no": "0400000K5011"
+  },
+  {
+    "date": "20261113",
+    "from_station": "香港西九龙",
+    "station_train_code": "G900",
+    "to_station": "上海虹桥",
+    "total_num": "7",
+    "train_no": "6x0000G90009"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "G968",
+    "to_station": "天津西",
+    "total_num": "11",
+    "train_no": "5l0000G96820"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "G9593",
+    "to_station": "六盘水",
+    "total_num": "2",
+    "train_no": "78000G95930X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "六盘水",
+    "station_train_code": "G9594",
+    "to_station": "贵阳北",
+    "total_num": "2",
+    "train_no": "78000G95940X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "G9807",
+    "to_station": "南昌东",
+    "total_num": "3",
+    "train_no": "57000G98070G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌南",
+    "station_train_code": "G9808",
+    "to_station": "景德镇北",
+    "total_num": "4",
+    "train_no": "57000G98080P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌东",
+    "station_train_code": "G9813",
+    "to_station": "南昌西",
+    "total_num": "2",
+    "train_no": "57000G98130E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌",
+    "station_train_code": "G9835",
+    "to_station": "厦门",
+    "total_num": "11",
+    "train_no": "57000G98380I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门",
+    "station_train_code": "G9836",
+    "to_station": "南昌东",
+    "total_num": "11",
+    "train_no": "58000G98360D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门",
+    "station_train_code": "G9837",
+    "to_station": "南昌东",
+    "total_num": "11",
+    "train_no": "58000G98360D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌",
+    "station_train_code": "G9838",
+    "to_station": "厦门",
+    "total_num": "11",
+    "train_no": "57000G98380I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "九江",
+    "station_train_code": "G9885",
+    "to_station": "平潭",
+    "total_num": "12",
+    "train_no": "57000G98880W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "平潭",
+    "station_train_code": "G9886",
+    "to_station": "九江",
+    "total_num": "11",
+    "train_no": "4z000G98860V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "平潭",
+    "station_train_code": "G9887",
+    "to_station": "九江",
+    "total_num": "11",
+    "train_no": "4z000G98860V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "九江",
+    "station_train_code": "G9888",
+    "to_station": "平潭",
+    "total_num": "12",
+    "train_no": "57000G98880W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "东莞东",
+    "station_train_code": "T125",
+    "to_station": "成都龙泉驿",
+    "total_num": "17",
+    "train_no": "670000T12830"
+  },
+  {
+    "date": "20261113",
+    "from_station": "东莞东",
+    "station_train_code": "T128",
+    "to_station": "成都龙泉驿",
+    "total_num": "17",
+    "train_no": "670000T12830"
+  },
+  {
+    "date": "20261113",
+    "from_station": "齐齐哈尔",
+    "station_train_code": "K50",
+    "to_station": "杭州",
+    "total_num": "37",
+    "train_no": "0400000K5011"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "K5231",
+    "to_station": "邯郸",
+    "total_num": "6",
+    "train_no": "24000K52310Z"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "K5233",
+    "to_station": "保定",
+    "total_num": "3",
+    "train_no": "24000K523309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "K5271",
+    "to_station": "石家庄",
+    "total_num": "4",
+    "train_no": "24000K52710S"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "K5289",
+    "to_station": "高碑店",
+    "total_num": "3",
+    "train_no": "24000K52890L"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南",
+    "station_train_code": "K5513",
+    "to_station": "枣庄西",
+    "total_num": "7",
+    "train_no": "47000K551309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "枣庄西",
+    "station_train_code": "K5516",
+    "to_station": "威海",
+    "total_num": "11",
+    "train_no": "47000K55160Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "枣庄西",
+    "station_train_code": "K5517",
+    "to_station": "威海",
+    "total_num": "11",
+    "train_no": "47000K55160Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌",
+    "station_train_code": "K5841",
+    "to_station": "分宜",
+    "total_num": "5",
+    "train_no": "57000K584170"
+  },
+  {
+    "date": "20261113",
+    "from_station": "分宜",
+    "station_train_code": "K5842",
+    "to_station": "南昌",
+    "total_num": "5",
+    "train_no": "57000K584270"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌",
+    "station_train_code": "T26",
+    "to_station": "苏州",
+    "total_num": "12",
+    "train_no": "5700000T2601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌",
+    "station_train_code": "T27",
+    "to_station": "苏州",
+    "total_num": "12",
+    "train_no": "5700000T2601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "T8803",
+    "to_station": "成都龙泉驿",
+    "total_num": "3",
+    "train_no": "77000T880310"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都龙泉驿",
+    "station_train_code": "T8804",
+    "to_station": "重庆北",
+    "total_num": "3",
+    "train_no": "76000T880410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宣威",
+    "station_train_code": "C901",
+    "to_station": "昆明",
+    "total_num": "3",
+    "train_no": "800000C9011D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C902",
+    "to_station": "宣威",
+    "total_num": "3",
+    "train_no": "800000C90216"
+  },
+  {
+    "date": "20261113",
+    "from_station": "曲靖",
+    "station_train_code": "C903",
+    "to_station": "昆明",
+    "total_num": "2",
+    "train_no": "800000C9031D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C904",
+    "to_station": "宣威",
+    "total_num": "3",
+    "train_no": "800000C9041B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宣威",
+    "station_train_code": "C905",
+    "to_station": "昆明",
+    "total_num": "3",
+    "train_no": "800000C9051B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C906",
+    "to_station": "曲靖",
+    "total_num": "2",
+    "train_no": "800000C90619"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宣威",
+    "station_train_code": "C907",
+    "to_station": "昆明",
+    "total_num": "3",
+    "train_no": "800000C90715"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C908",
+    "to_station": "宣威",
+    "total_num": "3",
+    "train_no": "800000C9083M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "毕节",
+    "station_train_code": "C9165",
+    "to_station": "贵阳北",
+    "total_num": "2",
+    "train_no": "78000C91650C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "C9166",
+    "to_station": "毕节",
+    "total_num": "3",
+    "train_no": "78000C91660C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "毕节",
+    "station_train_code": "C9175",
+    "to_station": "贵阳北",
+    "total_num": "4",
+    "train_no": "78000C91750N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "C9176",
+    "to_station": "毕节",
+    "total_num": "4",
+    "train_no": "78000C91760N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "C9180",
+    "to_station": "毕节",
+    "total_num": "3",
+    "train_no": "78000C91800Y"
+  },
+  {
+    "date": "20261113",
+    "from_station": "毕节",
+    "station_train_code": "C9181",
+    "to_station": "贵阳北",
+    "total_num": "3",
+    "train_no": "78000C91810Z"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C9541",
+    "to_station": "南丰",
+    "total_num": "4",
+    "train_no": "5u000C95410N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "婺源",
+    "station_train_code": "C9545",
+    "to_station": "南昌东",
+    "total_num": "5",
+    "train_no": "5y000C954501"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌东",
+    "station_train_code": "C9546",
+    "to_station": "婺源",
+    "total_num": "4",
+    "train_no": "57000C954607"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福鼎",
+    "station_train_code": "C9585",
+    "to_station": "龙岩",
+    "total_num": "12",
+    "train_no": "5n000C958513"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙岩",
+    "station_train_code": "C9586",
+    "to_station": "福州",
+    "total_num": "5",
+    "train_no": "5c000C95870T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙岩",
+    "station_train_code": "C9587",
+    "to_station": "福州",
+    "total_num": "5",
+    "train_no": "5c000C95870T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福鼎",
+    "station_train_code": "C9588",
+    "to_station": "龙岩",
+    "total_num": "12",
+    "train_no": "5n000C958513"
+  },
+  {
+    "date": "20261113",
+    "from_station": "萍乡北",
+    "station_train_code": "C9594",
+    "to_station": "南昌西",
+    "total_num": "5",
+    "train_no": "5w000C959401"
+  },
+  {
+    "date": "20261113",
+    "from_station": "萍乡北",
+    "station_train_code": "C9595",
+    "to_station": "福州",
+    "total_num": "10",
+    "train_no": "5w000C959801"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "C9596",
+    "to_station": "萍乡北",
+    "total_num": "9",
+    "train_no": "58000C959603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "C9597",
+    "to_station": "萍乡北",
+    "total_num": "9",
+    "train_no": "58000C959603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "萍乡北",
+    "station_train_code": "C9598",
+    "to_station": "福州",
+    "total_num": "10",
+    "train_no": "5w000C959801"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C9599",
+    "to_station": "萍乡北",
+    "total_num": "5",
+    "train_no": "5u000C959908"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赣州",
+    "station_train_code": "C9615",
+    "to_station": "瑞金",
+    "total_num": "4",
+    "train_no": "57000C96150E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "兰州",
+    "station_train_code": "K626",
+    "to_station": "固原",
+    "total_num": "11",
+    "train_no": "850000K62600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "兰州",
+    "station_train_code": "K627",
+    "to_station": "固原",
+    "total_num": "11",
+    "train_no": "850000K62600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赣州",
+    "station_train_code": "K6209",
+    "to_station": "瑞金",
+    "total_num": "3",
+    "train_no": "57000K62090Z"
+  },
+  {
+    "date": "20261113",
+    "from_station": "瑞金",
+    "station_train_code": "K6210",
+    "to_station": "赣州",
+    "total_num": "3",
+    "train_no": "57000K62100V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "拉萨",
+    "station_train_code": "K6833",
+    "to_station": "林芝",
+    "total_num": "6",
+    "train_no": "88000K68330R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "林芝",
+    "station_train_code": "K6834",
+    "to_station": "拉萨",
+    "total_num": "6",
+    "train_no": "88000K68340S"
+  },
+  {
+    "date": "20261113",
+    "from_station": "蓟州北",
+    "station_train_code": "S901",
+    "to_station": "天津北",
+    "total_num": "4",
+    "train_no": "250000S9010K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "S902",
+    "to_station": "蓟州北",
+    "total_num": "8",
+    "train_no": "250000S9020T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宝坻北",
+    "station_train_code": "S903",
+    "to_station": "天津北",
+    "total_num": "2",
+    "train_no": "250000S9030G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津北",
+    "station_train_code": "S906",
+    "to_station": "宝坻北",
+    "total_num": "2",
+    "train_no": "250000S9060E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宝坻北",
+    "station_train_code": "S909",
+    "to_station": "天津北",
+    "total_num": "2",
+    "train_no": "250000S9092F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津北",
+    "station_train_code": "S910",
+    "to_station": "蓟州北",
+    "total_num": "3",
+    "train_no": "250000S9100H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "蓟州北",
+    "station_train_code": "S911",
+    "to_station": "天津北",
+    "total_num": "5",
+    "train_no": "250000S9110F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宝坻北",
+    "station_train_code": "S913",
+    "to_station": "天津北",
+    "total_num": "2",
+    "train_no": "250000S9130M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津北",
+    "station_train_code": "S914",
+    "to_station": "蓟州北",
+    "total_num": "3",
+    "train_no": "250000S9142I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津北",
+    "station_train_code": "S916",
+    "to_station": "蓟州北",
+    "total_num": "3",
+    "train_no": "250000S9160K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "蓟州北",
+    "station_train_code": "S917",
+    "to_station": "天津",
+    "total_num": "3",
+    "train_no": "250000S9170G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津北",
+    "station_train_code": "S918",
+    "to_station": "蓟州北",
+    "total_num": "3",
+    "train_no": "250000S9180I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海南",
+    "station_train_code": "G4195",
+    "to_station": "景德镇北",
+    "total_num": "11",
+    "train_no": "55000G419500"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "G4196",
+    "to_station": "上海南",
+    "total_num": "10",
+    "train_no": "57000G419601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赣州西",
+    "station_train_code": "G4255",
+    "to_station": "深圳",
+    "total_num": "4",
+    "train_no": "57000G42550E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳",
+    "station_train_code": "G4256",
+    "to_station": "赣州西",
+    "total_num": "3",
+    "train_no": "65000G425606"
+  },
+  {
+    "date": "20261113",
+    "from_station": "婺源",
+    "station_train_code": "G4615",
+    "to_station": "长沙南",
+    "total_num": "11",
+    "train_no": "5y000G461500"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长沙南",
+    "station_train_code": "G4616",
+    "to_station": "婺源",
+    "total_num": "8",
+    "train_no": "6c000G461602"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "G4721",
+    "to_station": "桂林北",
+    "total_num": "6",
+    "train_no": "80000G47240P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "桂林北",
+    "station_train_code": "G4722",
+    "to_station": "昆明南",
+    "total_num": "13",
+    "train_no": "71000G47220M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "桂林北",
+    "station_train_code": "G4723",
+    "to_station": "昆明南",
+    "total_num": "13",
+    "train_no": "71000G47220M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "G4724",
+    "to_station": "桂林北",
+    "total_num": "6",
+    "train_no": "80000G47240P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G4765",
+    "to_station": "长春",
+    "total_num": "6",
+    "train_no": "24000G476516"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G4863",
+    "to_station": "南昌西",
+    "total_num": "9",
+    "train_no": "4e000G48630N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赣州西",
+    "station_train_code": "G4864",
+    "to_station": "武汉",
+    "total_num": "15",
+    "train_no": "57000G486417"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "4652",
+    "to_station": "二连",
+    "total_num": "6",
+    "train_no": "33000046520N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "4653",
+    "to_station": "二连",
+    "total_num": "6",
+    "train_no": "33000046520N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "许昌",
+    "station_train_code": "K2156",
+    "to_station": "日照",
+    "total_num": "9",
+    "train_no": "38000K215602"
+  },
+  {
+    "date": "20261113",
+    "from_station": "许昌",
+    "station_train_code": "K2157",
+    "to_station": "日照",
+    "total_num": "9",
+    "train_no": "38000K215602"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口",
+    "station_train_code": "S8155",
+    "to_station": "海口东",
+    "total_num": "5",
+    "train_no": "6b000S815505"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "S8156",
+    "to_station": "海口",
+    "total_num": "5",
+    "train_no": "6d000S815605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口",
+    "station_train_code": "S8157",
+    "to_station": "海口东",
+    "total_num": "5",
+    "train_no": "6b000S815705"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "S8158",
+    "to_station": "海口",
+    "total_num": "5",
+    "train_no": "6d000S815806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口",
+    "station_train_code": "S8159",
+    "to_station": "海口东",
+    "total_num": "5",
+    "train_no": "6b000S815905"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "S8160",
+    "to_station": "海口",
+    "total_num": "5",
+    "train_no": "6d000S816005"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口",
+    "station_train_code": "S8161",
+    "to_station": "海口东",
+    "total_num": "5",
+    "train_no": "6b000S816104"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "S8162",
+    "to_station": "海口",
+    "total_num": "5",
+    "train_no": "6d000S816204"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口",
+    "station_train_code": "S8163",
+    "to_station": "海口东",
+    "total_num": "5",
+    "train_no": "6b000S816305"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "S8164",
+    "to_station": "海口",
+    "total_num": "5",
+    "train_no": "6d000S816406"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "K329",
+    "to_station": "洛阳",
+    "total_num": "12",
+    "train_no": "250000K3321W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "K332",
+    "to_station": "洛阳",
+    "total_num": "12",
+    "train_no": "250000K3321W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "银川",
+    "station_train_code": "K359",
+    "to_station": "上海",
+    "total_num": "26",
+    "train_no": "870000K3596D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "银川",
+    "station_train_code": "K362",
+    "to_station": "上海",
+    "total_num": "26",
+    "train_no": "870000K3596D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安",
+    "station_train_code": "Y111",
+    "to_station": "北京",
+    "total_num": "3",
+    "train_no": "410000Y11100"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太原",
+    "station_train_code": "Z9207",
+    "to_station": "柳林南",
+    "total_num": "7",
+    "train_no": "27000Z920711"
+  },
+  {
+    "date": "20261113",
+    "from_station": "柳林南",
+    "station_train_code": "Z9208",
+    "to_station": "太原",
+    "total_num": "7",
+    "train_no": "27000Z920811"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西宁",
+    "station_train_code": "7581",
+    "to_station": "格尔木",
+    "total_num": "13",
+    "train_no": "88000075810R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "Z501",
+    "to_station": "三亚",
+    "total_num": "14",
+    "train_no": "240000Z5010I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "Z501",
+    "to_station": "三亚",
+    "total_num": "14",
+    "train_no": "240000Z5010I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "Z504",
+    "to_station": "三亚",
+    "total_num": "14",
+    "train_no": "240000Z5010I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "Z504",
+    "to_station": "三亚",
+    "total_num": "14",
+    "train_no": "240000Z5010I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳东",
+    "station_train_code": "Z586",
+    "to_station": "成都龙泉驿",
+    "total_num": "11",
+    "train_no": "650000Z58610"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳东",
+    "station_train_code": "Z587",
+    "to_station": "成都龙泉驿",
+    "total_num": "11",
+    "train_no": "650000Z58610"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "K7721",
+    "to_station": "衡水",
+    "total_num": "4",
+    "train_no": "24000K772107"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京",
+    "station_train_code": "K7723",
+    "to_station": "枣强",
+    "total_num": "8",
+    "train_no": "24000K77230C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "枣强",
+    "station_train_code": "K7724",
+    "to_station": "北京",
+    "total_num": "6",
+    "train_no": "26000K77240I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "K7911",
+    "to_station": "额济纳",
+    "total_num": "8",
+    "train_no": "33000K79110X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "二连",
+    "station_train_code": "K7923",
+    "to_station": "呼和浩特",
+    "total_num": "2",
+    "train_no": "33000K792680"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "K7924",
+    "to_station": "二连",
+    "total_num": "2",
+    "train_no": "33000K792400"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "K7925",
+    "to_station": "二连",
+    "total_num": "2",
+    "train_no": "33000K792400"
+  },
+  {
+    "date": "20261113",
+    "from_station": "二连",
+    "station_train_code": "K7926",
+    "to_station": "呼和浩特",
+    "total_num": "2",
+    "train_no": "33000K792680"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "K991",
+    "to_station": "海拉尔",
+    "total_num": "26",
+    "train_no": "330000K99403"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特",
+    "station_train_code": "K994",
+    "to_station": "海拉尔",
+    "total_num": "26",
+    "train_no": "330000K99403"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南雄",
+    "station_train_code": "K9207",
+    "to_station": "广州白云",
+    "total_num": "7",
+    "train_no": "63000K920727"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州白云",
+    "station_train_code": "K9208",
+    "to_station": "南雄",
+    "total_num": "7",
+    "train_no": "65000K920802"
+  },
+  {
+    "date": "20261113",
+    "from_station": "米兰",
+    "station_train_code": "K9755",
+    "to_station": "乌鲁木齐",
+    "total_num": "5",
+    "train_no": "94000K975507"
+  },
+  {
+    "date": "20261113",
+    "from_station": "米兰",
+    "station_train_code": "K9758",
+    "to_station": "乌鲁木齐",
+    "total_num": "5",
+    "train_no": "94000K975507"
+  },
+  {
+    "date": "20261113",
+    "from_station": "塔城",
+    "station_train_code": "K9856",
+    "to_station": "乌鲁木齐南",
+    "total_num": "7",
+    "train_no": "95000K985600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "C433",
+    "to_station": "启东",
+    "total_num": "8",
+    "train_no": "540000C43608"
+  },
+  {
+    "date": "20261113",
+    "from_station": "启东",
+    "station_train_code": "C434",
+    "to_station": "南京",
+    "total_num": "8",
+    "train_no": "5f0000C434A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "启东",
+    "station_train_code": "C435",
+    "to_station": "南京",
+    "total_num": "8",
+    "train_no": "5f0000C434A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "C436",
+    "to_station": "启东",
+    "total_num": "8",
+    "train_no": "540000C43608"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "C437",
+    "to_station": "启东",
+    "total_num": "6",
+    "train_no": "540000C440A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "启东",
+    "station_train_code": "C438",
+    "to_station": "南京",
+    "total_num": "6",
+    "train_no": "5f0000C438A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "启东",
+    "station_train_code": "C439",
+    "to_station": "南京",
+    "total_num": "6",
+    "train_no": "5f0000C438A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "保山",
+    "station_train_code": "C4321",
+    "to_station": "建水",
+    "total_num": "11",
+    "train_no": "8c000C432408"
+  },
+  {
+    "date": "20261113",
+    "from_station": "建水",
+    "station_train_code": "C4322",
+    "to_station": "保山",
+    "total_num": "8",
+    "train_no": "84000C432206"
+  },
+  {
+    "date": "20261113",
+    "from_station": "建水",
+    "station_train_code": "C4323",
+    "to_station": "保山",
+    "total_num": "8",
+    "train_no": "84000C432206"
+  },
+  {
+    "date": "20261113",
+    "from_station": "保山",
+    "station_train_code": "C4324",
+    "to_station": "建水",
+    "total_num": "11",
+    "train_no": "8c000C432408"
+  },
+  {
+    "date": "20261113",
+    "from_station": "保山",
+    "station_train_code": "C4325",
+    "to_station": "昆明",
+    "total_num": "6",
+    "train_no": "8c000C432807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C4326",
+    "to_station": "保山",
+    "total_num": "4",
+    "train_no": "80000C432607"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C4327",
+    "to_station": "保山",
+    "total_num": "4",
+    "train_no": "80000C432607"
+  },
+  {
+    "date": "20261113",
+    "from_station": "保山",
+    "station_train_code": "C4328",
+    "to_station": "昆明",
+    "total_num": "6",
+    "train_no": "8c000C432807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西宁",
+    "station_train_code": "C4381",
+    "to_station": "格尔木",
+    "total_num": "3",
+    "train_no": "88000C438106"
+  },
+  {
+    "date": "20261113",
+    "from_station": "格尔木",
+    "station_train_code": "C4382",
+    "to_station": "西宁",
+    "total_num": "3",
+    "train_no": "88000C438206"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "G531",
+    "to_station": "上海虹桥",
+    "total_num": "13",
+    "train_no": "240000G53106"
+  },
+  {
+    "date": "20261113",
+    "from_station": "曲阜东",
+    "station_train_code": "G5570",
+    "to_station": "青岛北",
+    "total_num": "8",
+    "train_no": "4p000G557008"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G2223",
+    "to_station": "扬州",
+    "total_num": "16",
+    "train_no": "4f000G222603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G2226",
+    "to_station": "扬州",
+    "total_num": "16",
+    "train_no": "4f000G222603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G2227",
+    "to_station": "合肥南",
+    "total_num": "13",
+    "train_no": "4f000G223005"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G2230",
+    "to_station": "合肥南",
+    "total_num": "13",
+    "train_no": "4f000G223005"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "C440",
+    "to_station": "启东",
+    "total_num": "6",
+    "train_no": "540000C440A0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南宁东",
+    "station_train_code": "D8335",
+    "to_station": "东兴市",
+    "total_num": "3",
+    "train_no": "71000D833519"
+  },
+  {
+    "date": "20261113",
+    "from_station": "东兴市",
+    "station_train_code": "D8336",
+    "to_station": "南宁东",
+    "total_num": "3",
+    "train_no": "73000D83361A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安",
+    "station_train_code": "C190",
+    "to_station": "石泉县",
+    "total_num": "6",
+    "train_no": "410000C1900Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安",
+    "station_train_code": "C191",
+    "to_station": "石泉县",
+    "total_num": "6",
+    "train_no": "410000C1900Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "石泉县",
+    "station_train_code": "C192",
+    "to_station": "西安",
+    "total_num": "6",
+    "train_no": "430000C1920Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳",
+    "station_train_code": "D7312",
+    "to_station": "潮汕",
+    "total_num": "6",
+    "train_no": "65000D73120K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汕头",
+    "station_train_code": "D7386",
+    "to_station": "深圳北",
+    "total_num": "8",
+    "train_no": "67000D73860E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汕头",
+    "station_train_code": "D7387",
+    "to_station": "深圳北",
+    "total_num": "8",
+    "train_no": "67000D73860E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南西",
+    "station_train_code": "D1602",
+    "to_station": "石家庄",
+    "total_num": "6",
+    "train_no": "4p000D160211"
+  },
+  {
+    "date": "20261113",
+    "from_station": "石家庄",
+    "station_train_code": "D1605",
+    "to_station": "济南西",
+    "total_num": "6",
+    "train_no": "26000D160515"
+  },
+  {
+    "date": "20261113",
+    "from_station": "石家庄",
+    "station_train_code": "D1607",
+    "to_station": "济南西",
+    "total_num": "8",
+    "train_no": "26000D160717"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南西",
+    "station_train_code": "D1608",
+    "to_station": "石家庄",
+    "total_num": "8",
+    "train_no": "4p000D160811"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长春",
+    "station_train_code": "C545",
+    "to_station": "松原",
+    "total_num": "2",
+    "train_no": "110000C5450K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "松原",
+    "station_train_code": "C546",
+    "to_station": "长春",
+    "total_num": "2",
+    "train_no": "110000C5460L"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G578",
+    "to_station": "连云港",
+    "total_num": "13",
+    "train_no": "4e0000G57807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G579",
+    "to_station": "连云港",
+    "total_num": "13",
+    "train_no": "4e0000G57807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "C5231",
+    "to_station": "南昌东",
+    "total_num": "4",
+    "train_no": "57000C523102"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌东",
+    "station_train_code": "C5240",
+    "to_station": "景德镇北",
+    "total_num": "4",
+    "train_no": "57000C524001"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙岩",
+    "station_train_code": "C5257",
+    "to_station": "龙岩",
+    "total_num": "14",
+    "train_no": "5c000C525707"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙岩",
+    "station_train_code": "C5258",
+    "to_station": "龙岩",
+    "total_num": "14",
+    "train_no": "5c000C525707"
+  },
+  {
+    "date": "20261113",
+    "from_station": "霞浦",
+    "station_train_code": "C5259",
+    "to_station": "厦门北",
+    "total_num": "6",
+    "train_no": "5n000C525909"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门北",
+    "station_train_code": "C5260",
+    "to_station": "霞浦",
+    "total_num": "7",
+    "train_no": "5n000C52600Y"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京北",
+    "station_train_code": "D6647",
+    "to_station": "张家口",
+    "total_num": "6",
+    "train_no": "24000D66470I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "张家口",
+    "station_train_code": "D6648",
+    "to_station": "北京北",
+    "total_num": "5",
+    "train_no": "24000D66480I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京北",
+    "station_train_code": "D6649",
+    "to_station": "张家口",
+    "total_num": "5",
+    "train_no": "24000D66490O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "张家口",
+    "station_train_code": "D6650",
+    "to_station": "北京北",
+    "total_num": "4",
+    "train_no": "24000D66500I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京北",
+    "station_train_code": "D6653",
+    "to_station": "张家口",
+    "total_num": "7",
+    "train_no": "24000D66530I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "张家口",
+    "station_train_code": "D6654",
+    "to_station": "北京北",
+    "total_num": "4",
+    "train_no": "24000D66540I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "C5517",
+    "to_station": "阳新",
+    "total_num": "5",
+    "train_no": "4e000C55170T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "C5518",
+    "to_station": "武汉",
+    "total_num": "2",
+    "train_no": "39000C55180U"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "C5521",
+    "to_station": "大冶北",
+    "total_num": "2",
+    "train_no": "4e000C55210J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "C5522",
+    "to_station": "武汉",
+    "total_num": "3",
+    "train_no": "39000C55220I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "D6154",
+    "to_station": "丰都",
+    "total_num": "2",
+    "train_no": "77000D61540F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "丰都",
+    "station_train_code": "D6155",
+    "to_station": "重庆北",
+    "total_num": "3",
+    "train_no": "77000D61550Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "D252",
+    "to_station": "成都南",
+    "total_num": "10",
+    "train_no": "800000D2520N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都南",
+    "station_train_code": "D259",
+    "to_station": "昆明",
+    "total_num": "9",
+    "train_no": "760000D2590B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "D2508",
+    "to_station": "太原南",
+    "total_num": "8",
+    "train_no": "4f000D25080K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "C7341",
+    "to_station": "三亚",
+    "total_num": "7",
+    "train_no": "6d000C73410B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "三亚",
+    "station_train_code": "C7342",
+    "to_station": "海口东",
+    "total_num": "6",
+    "train_no": "6b000C73420E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "C7343",
+    "to_station": "三亚",
+    "total_num": "7",
+    "train_no": "6d000C734307"
+  },
+  {
+    "date": "20261113",
+    "from_station": "三亚",
+    "station_train_code": "C7344",
+    "to_station": "海口东",
+    "total_num": "7",
+    "train_no": "6b000C73440A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "G2730",
+    "to_station": "南昌西",
+    "total_num": "11",
+    "train_no": "6i000G27300V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "G2745",
+    "to_station": "深圳北",
+    "total_num": "10",
+    "train_no": "5u000G274510"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C5111",
+    "to_station": "南昌西",
+    "total_num": "10",
+    "train_no": "5u000C511406"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C5112",
+    "to_station": "南昌西",
+    "total_num": "10",
+    "train_no": "5u000C51120A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C5113",
+    "to_station": "南昌西",
+    "total_num": "10",
+    "train_no": "5u000C51120A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "C5114",
+    "to_station": "南昌西",
+    "total_num": "10",
+    "train_no": "5u000C511406"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宁德",
+    "station_train_code": "C5119",
+    "to_station": "福州",
+    "total_num": "4",
+    "train_no": "5n000C51190B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "C5120",
+    "to_station": "宁德",
+    "total_num": "4",
+    "train_no": "58000C51200C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武夷山北",
+    "station_train_code": "C5123",
+    "to_station": "福州",
+    "total_num": "5",
+    "train_no": "5y000C51230J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "C5124",
+    "to_station": "武夷山北",
+    "total_num": "6",
+    "train_no": "58000C51240A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "江油",
+    "station_train_code": "C6211",
+    "to_station": "成都东",
+    "total_num": "4",
+    "train_no": "76000C62117J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C6212",
+    "to_station": "江油",
+    "total_num": "5",
+    "train_no": "76000C6212AK"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C6222",
+    "to_station": "绵阳",
+    "total_num": "4",
+    "train_no": "76000C62220W"
+  },
+  {
+    "date": "20261113",
+    "from_station": "绵阳",
+    "station_train_code": "C6223",
+    "to_station": "成都东",
+    "total_num": "2",
+    "train_no": "76000C62230Y"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜宾",
+    "station_train_code": "C6258",
+    "to_station": "成都东",
+    "total_num": "3",
+    "train_no": "77000C62580K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C6259",
+    "to_station": "宜宾",
+    "total_num": "5",
+    "train_no": "76000C62590T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D7011",
+    "to_station": "阳新",
+    "total_num": "3",
+    "train_no": "4e000D70110E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D7012",
+    "to_station": "武汉",
+    "total_num": "5",
+    "train_no": "39000D70120J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D7013",
+    "to_station": "武穴北",
+    "total_num": "6",
+    "train_no": "4e000D70130C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武穴北",
+    "station_train_code": "D7014",
+    "to_station": "武汉",
+    "total_num": "6",
+    "train_no": "39000D70140J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D7015",
+    "to_station": "大冶北",
+    "total_num": "4",
+    "train_no": "4e000D70150D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大冶北",
+    "station_train_code": "D7016",
+    "to_station": "武汉",
+    "total_num": "4",
+    "train_no": "39000D70160C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D7017",
+    "to_station": "武穴北",
+    "total_num": "5",
+    "train_no": "4e000D701709"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武穴北",
+    "station_train_code": "D7018",
+    "to_station": "武汉",
+    "total_num": "6",
+    "train_no": "39000D70180G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D7022",
+    "to_station": "武汉东",
+    "total_num": "7",
+    "train_no": "39000D70220I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉东",
+    "station_train_code": "D7023",
+    "to_station": "武穴北",
+    "total_num": "3",
+    "train_no": "39000D702308"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武穴北",
+    "station_train_code": "D7024",
+    "to_station": "武汉",
+    "total_num": "3",
+    "train_no": "39000D702404"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D7025",
+    "to_station": "大冶北",
+    "total_num": "6",
+    "train_no": "4e000D702503"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大冶北",
+    "station_train_code": "D7026",
+    "to_station": "武汉",
+    "total_num": "3",
+    "train_no": "39000D702605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "云梦东",
+    "station_train_code": "D7056",
+    "to_station": "汉口",
+    "total_num": "3",
+    "train_no": "4r000D70560C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D7065",
+    "to_station": "宜昌东",
+    "total_num": "5",
+    "train_no": "39000D706551"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D7066",
+    "to_station": "汉口",
+    "total_num": "6",
+    "train_no": "42000D70660Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "G6719",
+    "to_station": "邯郸东",
+    "total_num": "5",
+    "train_no": "24000G671923"
+  },
+  {
+    "date": "20261113",
+    "from_station": "石家庄",
+    "station_train_code": "G6734",
+    "to_station": "北京西",
+    "total_num": "4",
+    "train_no": "26000G67341G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "邯郸东",
+    "station_train_code": "G6744",
+    "to_station": "石家庄",
+    "total_num": "2",
+    "train_no": "26000G67442A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌北",
+    "station_train_code": "G6762",
+    "to_station": "汉口",
+    "total_num": "6",
+    "train_no": "7b000G676201"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6763",
+    "to_station": "宜昌北",
+    "total_num": "3",
+    "train_no": "39000G676302"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌北",
+    "station_train_code": "G6764",
+    "to_station": "汉口",
+    "total_num": "4",
+    "train_no": "7b000G676401"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6765",
+    "to_station": "宜昌北",
+    "total_num": "8",
+    "train_no": "39000G676501"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌北",
+    "station_train_code": "G6766",
+    "to_station": "汉口",
+    "total_num": "8",
+    "train_no": "7b000G676601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6767",
+    "to_station": "宜昌北",
+    "total_num": "7",
+    "train_no": "39000G676701"
+  },
+  {
+    "date": "20261113",
+    "from_station": "襄阳东",
+    "station_train_code": "G6781",
+    "to_station": "巴东",
+    "total_num": "6",
+    "train_no": "4r000G678100"
+  },
+  {
+    "date": "20261113",
+    "from_station": "巴东",
+    "station_train_code": "G6782",
+    "to_station": "汉口",
+    "total_num": "9",
+    "train_no": "42000G678206"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6783",
+    "to_station": "巴东",
+    "total_num": "9",
+    "train_no": "39000G678309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "巴东",
+    "station_train_code": "G6784",
+    "to_station": "汉口",
+    "total_num": "9",
+    "train_no": "42000G678404"
+  },
+  {
+    "date": "20261113",
+    "from_station": "襄阳东",
+    "station_train_code": "G6792",
+    "to_station": "汉口",
+    "total_num": "5",
+    "train_no": "4r000G679201"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6793",
+    "to_station": "襄阳东",
+    "total_num": "6",
+    "train_no": "39000G679303"
+  },
+  {
+    "date": "20261113",
+    "from_station": "襄阳东",
+    "station_train_code": "G6794",
+    "to_station": "汉口",
+    "total_num": "5",
+    "train_no": "4r000G679402"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6795",
+    "to_station": "十堰东",
+    "total_num": "8",
+    "train_no": "39000G679502"
+  },
+  {
+    "date": "20261113",
+    "from_station": "十堰东",
+    "station_train_code": "G6796",
+    "to_station": "汉口",
+    "total_num": "10",
+    "train_no": "4r000G679605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6799",
+    "to_station": "十堰东",
+    "total_num": "8",
+    "train_no": "39000G679903"
+  },
+  {
+    "date": "20261113",
+    "from_station": "犀浦",
+    "station_train_code": "S5085",
+    "to_station": "青城山",
+    "total_num": "2",
+    "train_no": "76000S50850G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "青城山",
+    "station_train_code": "S5086",
+    "to_station": "犀浦",
+    "total_num": "3",
+    "train_no": "76000S50860H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "G7547",
+    "to_station": "杭州东",
+    "total_num": "4",
+    "train_no": "5l000G754704"
+  },
+  {
+    "date": "20261113",
+    "from_station": "杭州东",
+    "station_train_code": "G7548",
+    "to_station": "上海虹桥",
+    "total_num": "4",
+    "train_no": "56000G754875"
+  },
+  {
+    "date": "20261113",
+    "from_station": "岳阳东",
+    "station_train_code": "G6131",
+    "to_station": "佛山",
+    "total_num": "8",
+    "train_no": "6c000G61313G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "G6132",
+    "to_station": "岳阳东",
+    "total_num": "7",
+    "train_no": "6c000G61321X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "永州",
+    "station_train_code": "G6145",
+    "to_station": "广州南",
+    "total_num": "6",
+    "train_no": "62000G61480T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山",
+    "station_train_code": "G6146",
+    "to_station": "永州",
+    "total_num": "9",
+    "train_no": "6u000G614600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山",
+    "station_train_code": "G6147",
+    "to_station": "永州",
+    "total_num": "9",
+    "train_no": "6u000G614600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "永州",
+    "station_train_code": "G6148",
+    "to_station": "广州南",
+    "total_num": "6",
+    "train_no": "62000G61480T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南",
+    "station_train_code": "C143",
+    "to_station": "烟台",
+    "total_num": "5",
+    "train_no": "470000C1430A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "烟台",
+    "station_train_code": "C146",
+    "to_station": "菏泽",
+    "total_num": "10",
+    "train_no": "490000C14606"
+  },
+  {
+    "date": "20261113",
+    "from_station": "烟台",
+    "station_train_code": "C147",
+    "to_station": "菏泽",
+    "total_num": "10",
+    "train_no": "490000C14606"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D5822",
+    "to_station": "武汉东",
+    "total_num": "5",
+    "train_no": "39000D582201"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉东",
+    "station_train_code": "D5823",
+    "to_station": "阳新",
+    "total_num": "5",
+    "train_no": "39000D58230I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D5824",
+    "to_station": "仙桃",
+    "total_num": "8",
+    "train_no": "39000D582401"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D5825",
+    "to_station": "仙桃",
+    "total_num": "8",
+    "train_no": "39000D582401"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5826",
+    "to_station": "汉口",
+    "total_num": "2",
+    "train_no": "39000D582601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大冶北",
+    "station_train_code": "D5856",
+    "to_station": "武汉",
+    "total_num": "4",
+    "train_no": "39000D585603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武穴北",
+    "station_train_code": "D5858",
+    "to_station": "武汉东",
+    "total_num": "7",
+    "train_no": "39000D585803"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉东",
+    "station_train_code": "D5859",
+    "to_station": "大冶北",
+    "total_num": "3",
+    "train_no": "39000D585901"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D5861",
+    "to_station": "阳新",
+    "total_num": "5",
+    "train_no": "4e000D586101"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D5862",
+    "to_station": "汉口",
+    "total_num": "6",
+    "train_no": "39000D586208"
+  },
+  {
+    "date": "20261113",
+    "from_station": "阳新",
+    "station_train_code": "D5863",
+    "to_station": "汉口",
+    "total_num": "6",
+    "train_no": "39000D586208"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5893",
+    "to_station": "武穴北",
+    "total_num": "6",
+    "train_no": "39000D589640"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5896",
+    "to_station": "武穴北",
+    "total_num": "6",
+    "train_no": "39000D589640"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5745",
+    "to_station": "阳新",
+    "total_num": "11",
+    "train_no": "42000D574806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5748",
+    "to_station": "阳新",
+    "total_num": "11",
+    "train_no": "42000D574806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "蕲春南",
+    "station_train_code": "D5762",
+    "to_station": "仙桃",
+    "total_num": "9",
+    "train_no": "39000D576204"
+  },
+  {
+    "date": "20261113",
+    "from_station": "蕲春南",
+    "station_train_code": "D5763",
+    "to_station": "仙桃",
+    "total_num": "9",
+    "train_no": "39000D576204"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5765",
+    "to_station": "阳新",
+    "total_num": "9",
+    "train_no": "39000D57680C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5768",
+    "to_station": "阳新",
+    "total_num": "9",
+    "train_no": "39000D57680C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "利川",
+    "station_train_code": "D5781",
+    "to_station": "武穴北",
+    "total_num": "15",
+    "train_no": "42000D578408"
+  },
+  {
+    "date": "20261113",
+    "from_station": "黄冈东",
+    "station_train_code": "D5782",
+    "to_station": "利川",
+    "total_num": "13",
+    "train_no": "39000D57820C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "黄冈东",
+    "station_train_code": "D5783",
+    "to_station": "利川",
+    "total_num": "13",
+    "train_no": "39000D57820C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "利川",
+    "station_train_code": "D5784",
+    "to_station": "武穴北",
+    "total_num": "15",
+    "train_no": "42000D578408"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5785",
+    "to_station": "阳新",
+    "total_num": "9",
+    "train_no": "42000D578807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大冶北",
+    "station_train_code": "D5786",
+    "to_station": "宜昌东",
+    "total_num": "8",
+    "train_no": "39000D578607"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大冶北",
+    "station_train_code": "D5787",
+    "to_station": "宜昌东",
+    "total_num": "8",
+    "train_no": "39000D578607"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5788",
+    "to_station": "阳新",
+    "total_num": "9",
+    "train_no": "42000D578807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州航空港",
+    "station_train_code": "G2671",
+    "to_station": "南通",
+    "total_num": "16",
+    "train_no": "38000G267410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南通",
+    "station_train_code": "G2672",
+    "to_station": "郑州航空港",
+    "total_num": "16",
+    "train_no": "5f000G267230"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南通",
+    "station_train_code": "G2673",
+    "to_station": "郑州航空港",
+    "total_num": "16",
+    "train_no": "5f000G267230"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州航空港",
+    "station_train_code": "G2674",
+    "to_station": "南通",
+    "total_num": "16",
+    "train_no": "38000G267410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "C7831",
+    "to_station": "海口东",
+    "total_num": "15",
+    "train_no": "6d000C783202"
+  },
+  {
+    "date": "20261113",
+    "from_station": "海口东",
+    "station_train_code": "C7832",
+    "to_station": "海口东",
+    "total_num": "15",
+    "train_no": "6d000C783202"
+  },
+  {
+    "date": "20261113",
+    "from_station": "雅安",
+    "station_train_code": "C3456",
+    "to_station": "成都南",
+    "total_num": "6",
+    "train_no": "76000C34560O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "雅安",
+    "station_train_code": "C3457",
+    "to_station": "成都南",
+    "total_num": "6",
+    "train_no": "76000C34560O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都南",
+    "station_train_code": "C3467",
+    "to_station": "雅安",
+    "total_num": "2",
+    "train_no": "76000C347001"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都南",
+    "station_train_code": "C3470",
+    "to_station": "雅安",
+    "total_num": "2",
+    "train_no": "76000C347001"
+  },
+  {
+    "date": "20261113",
+    "from_station": "丽江",
+    "station_train_code": "C591",
+    "to_station": "昆明",
+    "total_num": "4",
+    "train_no": "8c0000C5940G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C592",
+    "to_station": "丽江",
+    "total_num": "2",
+    "train_no": "800000C5920I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C593",
+    "to_station": "丽江",
+    "total_num": "2",
+    "train_no": "800000C5920I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "丽江",
+    "station_train_code": "C594",
+    "to_station": "昆明",
+    "total_num": "4",
+    "train_no": "8c0000C5940G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C5981",
+    "to_station": "泸州",
+    "total_num": "6",
+    "train_no": "76000C59810B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "C5982",
+    "to_station": "成都东",
+    "total_num": "8",
+    "train_no": "78000C598202"
+  },
+  {
+    "date": "20261113",
+    "from_station": "泸州",
+    "station_train_code": "C5986",
+    "to_station": "成都东",
+    "total_num": "9",
+    "train_no": "77000C598601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C5987",
+    "to_station": "贵阳北",
+    "total_num": "4",
+    "train_no": "76000C598705"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "D37",
+    "to_station": "汉口",
+    "total_num": "4",
+    "train_no": "2400000D370R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "D2657",
+    "to_station": "西宁",
+    "total_num": "8",
+    "train_no": "4f000D26570C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "清河",
+    "station_train_code": "G2443",
+    "to_station": "呼和浩特东",
+    "total_num": "6",
+    "train_no": "24000G244330"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特东",
+    "station_train_code": "G2444",
+    "to_station": "清河",
+    "total_num": "5",
+    "train_no": "33000G244410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "清河",
+    "station_train_code": "G2479",
+    "to_station": "呼和浩特东",
+    "total_num": "5",
+    "train_no": "24000G24790D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特东",
+    "station_train_code": "G2480",
+    "to_station": "北京北",
+    "total_num": "6",
+    "train_no": "33000G24800C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京北",
+    "station_train_code": "G2487",
+    "to_station": "呼和浩特东",
+    "total_num": "6",
+    "train_no": "24000G24870E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特东",
+    "station_train_code": "G2488",
+    "to_station": "北京北",
+    "total_num": "8",
+    "train_no": "33000G24880B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "C6917",
+    "to_station": "湛江西",
+    "total_num": "11",
+    "train_no": "6c000C691719"
+  },
+  {
+    "date": "20261113",
+    "from_station": "湛江西",
+    "station_train_code": "C6932",
+    "to_station": "广州南",
+    "total_num": "12",
+    "train_no": "6k000C69321N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "C6995",
+    "to_station": "江门",
+    "total_num": "6",
+    "train_no": "6c000C699507"
+  },
+  {
+    "date": "20261113",
+    "from_station": "江门",
+    "station_train_code": "C6996",
+    "to_station": "广州南",
+    "total_num": "6",
+    "train_no": "6y000C699603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京北",
+    "station_train_code": "G7887",
+    "to_station": "张家口",
+    "total_num": "5",
+    "train_no": "24000G788702"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "G746",
+    "to_station": "北京南",
+    "total_num": "11",
+    "train_no": "5l0000G74620"
+  },
+  {
+    "date": "20261113",
+    "from_station": "合肥南",
+    "station_train_code": "G7413",
+    "to_station": "黄山北",
+    "total_num": "6",
+    "train_no": "5i000G7413H0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州",
+    "station_train_code": "K8005",
+    "to_station": "洛阳",
+    "total_num": "3",
+    "train_no": "38000K80050E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "洛阳",
+    "station_train_code": "K8006",
+    "to_station": "郑州",
+    "total_num": "2",
+    "train_no": "40000K800605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "K1305",
+    "to_station": "郑州",
+    "total_num": "8",
+    "train_no": "24000K13050N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州",
+    "station_train_code": "K1306",
+    "to_station": "北京丰台",
+    "total_num": "16",
+    "train_no": "38000K13060R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "九江",
+    "station_train_code": "K1372",
+    "to_station": "上海松江",
+    "total_num": "11",
+    "train_no": "57000K13720O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "D7727",
+    "to_station": "大连北",
+    "total_num": "9",
+    "train_no": "12000D772729"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大连北",
+    "station_train_code": "D7728",
+    "to_station": "沈阳",
+    "total_num": "12",
+    "train_no": "1g000D77292C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大连北",
+    "station_train_code": "D7729",
+    "to_station": "沈阳",
+    "total_num": "12",
+    "train_no": "1g000D77292C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "D7730",
+    "to_station": "大连北",
+    "total_num": "9",
+    "train_no": "12000D772729"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大连北",
+    "station_train_code": "D7791",
+    "to_station": "赤峰",
+    "total_num": "9",
+    "train_no": "1g000D77910T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赤峰",
+    "station_train_code": "D7792",
+    "to_station": "大连北",
+    "total_num": "12",
+    "train_no": "16000D77920U"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赤峰",
+    "station_train_code": "D7793",
+    "to_station": "大连北",
+    "total_num": "12",
+    "train_no": "16000D77920U"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大连北",
+    "station_train_code": "D7794",
+    "to_station": "赤峰",
+    "total_num": "9",
+    "train_no": "1g000D77910T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "C225",
+    "to_station": "邯郸",
+    "total_num": "3",
+    "train_no": "240000C22500"
+  },
+  {
+    "date": "20261113",
+    "from_station": "邯郸",
+    "station_train_code": "C226",
+    "to_station": "北京丰台",
+    "total_num": "4",
+    "train_no": "260000C22600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "C227",
+    "to_station": "邯郸",
+    "total_num": "4",
+    "train_no": "240000C2270J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "邯郸",
+    "station_train_code": "C228",
+    "to_station": "北京西",
+    "total_num": "5",
+    "train_no": "260000C22807"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2213",
+    "to_station": "天津",
+    "total_num": "3",
+    "train_no": "24000C221313"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2218",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22180R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2223",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C22230H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2228",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22280N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2233",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C223319"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2238",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22380R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2241",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C22410R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2246",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22460E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2249",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C224901"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2254",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22540E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2261",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C226102"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2265",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C226503"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2266",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C226603"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2269",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C226903"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2270",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C227004"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2271",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C22710G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2273",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000C22730F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2274",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22740F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2276",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C22760L"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "C2278",
+    "to_station": "北京南",
+    "total_num": "3",
+    "train_no": "25000C22780J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5201",
+    "to_station": "仙桃",
+    "total_num": "3",
+    "train_no": "39000D520107"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5202",
+    "to_station": "汉口",
+    "total_num": "3",
+    "train_no": "39000D52020H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5207",
+    "to_station": "仙桃",
+    "total_num": "2",
+    "train_no": "39000D520707"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5240",
+    "to_station": "云梦东",
+    "total_num": "4",
+    "train_no": "39000D524003"
+  },
+  {
+    "date": "20261113",
+    "from_station": "仙桃",
+    "station_train_code": "D5241",
+    "to_station": "云梦东",
+    "total_num": "4",
+    "train_no": "39000D524003"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G3275",
+    "to_station": "江阴",
+    "total_num": "12",
+    "train_no": "4f000G327806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G3278",
+    "to_station": "江阴",
+    "total_num": "12",
+    "train_no": "4f000G327806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆西",
+    "station_train_code": "C6087",
+    "to_station": "泸州",
+    "total_num": "2",
+    "train_no": "77000C608700"
+  },
+  {
+    "date": "20261113",
+    "from_station": "泸州",
+    "station_train_code": "C6088",
+    "to_station": "重庆西",
+    "total_num": "2",
+    "train_no": "77000C608810"
+  },
+  {
+    "date": "20261113",
+    "from_station": "延安",
+    "station_train_code": "C8901",
+    "to_station": "西安北",
+    "total_num": "6",
+    "train_no": "4a000C890101"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安东",
+    "station_train_code": "C8918",
+    "to_station": "延安",
+    "total_num": "7",
+    "train_no": "41000C891800"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5957",
+    "to_station": "宜昌东",
+    "total_num": "3",
+    "train_no": "39000D59570E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5958",
+    "to_station": "汉口",
+    "total_num": "3",
+    "train_no": "42000D59580I"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5963",
+    "to_station": "宜昌东",
+    "total_num": "5",
+    "train_no": "39000D596309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5975",
+    "to_station": "利川",
+    "total_num": "6",
+    "train_no": "39000D597520"
+  },
+  {
+    "date": "20261113",
+    "from_station": "利川",
+    "station_train_code": "D5976",
+    "to_station": "汉口",
+    "total_num": "4",
+    "train_no": "42000D597600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5977",
+    "to_station": "宜昌东",
+    "total_num": "7",
+    "train_no": "39000D597704"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5978",
+    "to_station": "汉口",
+    "total_num": "4",
+    "train_no": "42000D597801"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宜昌东",
+    "station_train_code": "D5986",
+    "to_station": "汉口",
+    "total_num": "4",
+    "train_no": "42000D598609"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5987",
+    "to_station": "恩施",
+    "total_num": "8",
+    "train_no": "39000D59870M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "恩施",
+    "station_train_code": "D5988",
+    "to_station": "汉口",
+    "total_num": "9",
+    "train_no": "42000D59880O"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5991",
+    "to_station": "恩施",
+    "total_num": "3",
+    "train_no": "39000D59910F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "D5999",
+    "to_station": "宜昌东",
+    "total_num": "4",
+    "train_no": "39000D599905"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明",
+    "station_train_code": "C582",
+    "to_station": "宣威",
+    "total_num": "3",
+    "train_no": "800000C5820F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宣威",
+    "station_train_code": "C589",
+    "to_station": "昆明",
+    "total_num": "3",
+    "train_no": "800000C5890K"
+  },
+  {
+    "date": "20261113",
+    "from_station": "松潘",
+    "station_train_code": "C5815",
+    "to_station": "成都东",
+    "total_num": "2",
+    "train_no": "76000C581802"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C5816",
+    "to_station": "松潘",
+    "total_num": "2",
+    "train_no": "76000C581604"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "C5817",
+    "to_station": "松潘",
+    "total_num": "2",
+    "train_no": "76000C581604"
+  },
+  {
+    "date": "20261113",
+    "from_station": "松潘",
+    "station_train_code": "C5818",
+    "to_station": "成都东",
+    "total_num": "2",
+    "train_no": "76000C581802"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1125",
+    "to_station": "沈阳",
+    "total_num": "4",
+    "train_no": "16000C11280R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳南",
+    "station_train_code": "C1126",
+    "to_station": "通辽",
+    "total_num": "5",
+    "train_no": "12000C112610"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳南",
+    "station_train_code": "C1127",
+    "to_station": "通辽",
+    "total_num": "5",
+    "train_no": "12000C112610"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1128",
+    "to_station": "沈阳",
+    "total_num": "4",
+    "train_no": "16000C11280R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1133",
+    "to_station": "沈阳南",
+    "total_num": "4",
+    "train_no": "16000C11363A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "C1134",
+    "to_station": "通辽",
+    "total_num": "4",
+    "train_no": "12000C11343P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "C1135",
+    "to_station": "通辽",
+    "total_num": "4",
+    "train_no": "12000C11343P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1136",
+    "to_station": "沈阳南",
+    "total_num": "4",
+    "train_no": "16000C11363A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1137",
+    "to_station": "沈阳",
+    "total_num": "4",
+    "train_no": "16000C114014"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳南",
+    "station_train_code": "C1138",
+    "to_station": "通辽",
+    "total_num": "5",
+    "train_no": "12000C11380Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳南",
+    "station_train_code": "C1139",
+    "to_station": "通辽",
+    "total_num": "5",
+    "train_no": "12000C11380Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "C1140",
+    "to_station": "沈阳",
+    "total_num": "4",
+    "train_no": "16000C114014"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长沙南",
+    "station_train_code": "C8871",
+    "to_station": "洞口",
+    "total_num": "5",
+    "train_no": "6c000C887107"
+  },
+  {
+    "date": "20261113",
+    "from_station": "洞口",
+    "station_train_code": "C8872",
+    "to_station": "长沙南",
+    "total_num": "5",
+    "train_no": "61000C887307"
+  },
+  {
+    "date": "20261113",
+    "from_station": "洞口",
+    "station_train_code": "C8873",
+    "to_station": "长沙南",
+    "total_num": "5",
+    "train_no": "61000C887307"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长沙南",
+    "station_train_code": "C8874",
+    "to_station": "洞口",
+    "total_num": "5",
+    "train_no": "6c000C887107"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2633",
+    "to_station": "天津西",
+    "total_num": "3",
+    "train_no": "24000C26330F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "C2636",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C26360B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G692",
+    "to_station": "太原南",
+    "total_num": "12",
+    "train_no": "4e0000G6920C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "C7705",
+    "to_station": "珠海",
+    "total_num": "9",
+    "train_no": "6c000C77050Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "珠海",
+    "station_train_code": "C7714",
+    "to_station": "广州南",
+    "total_num": "7",
+    "train_no": "6e000C77141J"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广南县",
+    "station_train_code": "D8131",
+    "to_station": "昆明南",
+    "total_num": "3",
+    "train_no": "80000D81310L"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "D8132",
+    "to_station": "广南县",
+    "total_num": "4",
+    "train_no": "80000D813220"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "D8140",
+    "to_station": "普者黑",
+    "total_num": "3",
+    "train_no": "80000D814014"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D2111",
+    "to_station": "黄梅东",
+    "total_num": "3",
+    "train_no": "4e000D211103"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D2181",
+    "to_station": "黄梅东",
+    "total_num": "6",
+    "train_no": "4e000D218105"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆东",
+    "station_train_code": "C6401",
+    "to_station": "黔江",
+    "total_num": "5",
+    "train_no": "77000C640121"
+  },
+  {
+    "date": "20261113",
+    "from_station": "襄阳东",
+    "station_train_code": "G3829",
+    "to_station": "广州南",
+    "total_num": "13",
+    "train_no": "4r000G383201"
+  },
+  {
+    "date": "20261113",
+    "from_station": "襄阳东",
+    "station_train_code": "G3832",
+    "to_station": "广州南",
+    "total_num": "13",
+    "train_no": "4r000G383201"
+  },
+  {
+    "date": "20261113",
+    "from_station": "万州北",
+    "station_train_code": "S5471",
+    "to_station": "重庆北",
+    "total_num": "3",
+    "train_no": "77000S54710D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "S5472",
+    "to_station": "万州北",
+    "total_num": "3",
+    "train_no": "77000S54720C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "D2891",
+    "to_station": "黄梅东",
+    "total_num": "5",
+    "train_no": "4e000D289110"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太原南",
+    "station_train_code": "D3325",
+    "to_station": "长治东",
+    "total_num": "2",
+    "train_no": "27000D332502"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长治东",
+    "station_train_code": "D3326",
+    "to_station": "太原南",
+    "total_num": "2",
+    "train_no": "38000D332601"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太原南",
+    "station_train_code": "D3361",
+    "to_station": "晋城东",
+    "total_num": "6",
+    "train_no": "27000D336145"
+  },
+  {
+    "date": "20261113",
+    "from_station": "晋城东",
+    "station_train_code": "D3366",
+    "to_station": "太原南",
+    "total_num": "4",
+    "train_no": "38000D33660T"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3603",
+    "to_station": "沈阳",
+    "total_num": "7",
+    "train_no": "24000G360320"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳北",
+    "station_train_code": "G3604",
+    "to_station": "北京朝阳",
+    "total_num": "9",
+    "train_no": "12000G36040B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3607",
+    "to_station": "沈阳",
+    "total_num": "8",
+    "train_no": "24000G360700"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "G3612",
+    "to_station": "北京朝阳",
+    "total_num": "5",
+    "train_no": "12000G361200"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3613",
+    "to_station": "沈阳北",
+    "total_num": "4",
+    "train_no": "24000G36130B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "G3614",
+    "to_station": "北京朝阳",
+    "total_num": "5",
+    "train_no": "12000G361400"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3641",
+    "to_station": "鞍山西",
+    "total_num": "10",
+    "train_no": "24000G364109"
+  },
+  {
+    "date": "20261113",
+    "from_station": "鞍山西",
+    "station_train_code": "G3642",
+    "to_station": "北京朝阳",
+    "total_num": "10",
+    "train_no": "1g000G364200"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3653",
+    "to_station": "通辽",
+    "total_num": "9",
+    "train_no": "24000G36531A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "通辽",
+    "station_train_code": "G3656",
+    "to_station": "北京朝阳",
+    "total_num": "8",
+    "train_no": "16000G365612"
+  },
+  {
+    "date": "20261113",
+    "from_station": "赤峰",
+    "station_train_code": "G3678",
+    "to_station": "北京朝阳",
+    "total_num": "7",
+    "train_no": "16000G367802"
+  },
+  {
+    "date": "20261113",
+    "from_station": "怀集",
+    "station_train_code": "D7551",
+    "to_station": "广州南",
+    "total_num": "4",
+    "train_no": "70000D75510E"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D7552",
+    "to_station": "怀集",
+    "total_num": "3",
+    "train_no": "6c000D755208"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郁南",
+    "station_train_code": "D7553",
+    "to_station": "广州南",
+    "total_num": "4",
+    "train_no": "60000D755305"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D7554",
+    "to_station": "郁南",
+    "total_num": "7",
+    "train_no": "6c000D755406"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D7556",
+    "to_station": "肇庆东",
+    "total_num": "3",
+    "train_no": "6c000D755600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京丰台",
+    "station_train_code": "D141",
+    "to_station": "聊城",
+    "total_num": "4",
+    "train_no": "240000D1410B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "聊城",
+    "station_train_code": "D142",
+    "to_station": "北京丰台",
+    "total_num": "4",
+    "train_no": "470000D1420G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "徐州",
+    "station_train_code": "K161",
+    "to_station": "桂林北",
+    "total_num": "23",
+    "train_no": "480000K16109"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州东",
+    "station_train_code": "G3401",
+    "to_station": "重庆北",
+    "total_num": "12",
+    "train_no": "38000G34010P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "G3406",
+    "to_station": "郑州东",
+    "total_num": "10",
+    "train_no": "77000G34060G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G3459",
+    "to_station": "重庆北",
+    "total_num": "8",
+    "train_no": "39000G345910"
+  },
+  {
+    "date": "20261113",
+    "from_station": "吉安西",
+    "station_train_code": "G3053",
+    "to_station": "上海",
+    "total_num": "17",
+    "train_no": "57000G305605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "吉安西",
+    "station_train_code": "G3056",
+    "to_station": "上海",
+    "total_num": "17",
+    "train_no": "57000G305605"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌东",
+    "station_train_code": "G3061",
+    "to_station": "广州东",
+    "total_num": "9",
+    "train_no": "57000G306110"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G3095",
+    "to_station": "厦门北",
+    "total_num": "17",
+    "train_no": "4e000G309506"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门北",
+    "station_train_code": "G3096",
+    "to_station": "武汉",
+    "total_num": "13",
+    "train_no": "5n000G309606"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门北",
+    "station_train_code": "G3097",
+    "to_station": "武汉",
+    "total_num": "13",
+    "train_no": "5n000G309606"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G3098",
+    "to_station": "厦门北",
+    "total_num": "17",
+    "train_no": "4e000G309506"
+  },
+  {
+    "date": "20261113",
+    "from_station": "清河",
+    "station_train_code": "G2559",
+    "to_station": "呼和浩特东",
+    "total_num": "4",
+    "train_no": "24000G255910"
+  },
+  {
+    "date": "20261113",
+    "from_station": "呼和浩特东",
+    "station_train_code": "G2560",
+    "to_station": "清河",
+    "total_num": "5",
+    "train_no": "33000G256000"
+  },
+  {
+    "date": "20261113",
+    "from_station": "黄山北",
+    "station_train_code": "G2562",
+    "to_station": "北京南",
+    "total_num": "16",
+    "train_no": "52000G256207"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "G2565",
+    "to_station": "合肥南",
+    "total_num": "7",
+    "train_no": "24000G25651D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2933",
+    "to_station": "郑州航空港",
+    "total_num": "8",
+    "train_no": "38000C293310"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州东",
+    "station_train_code": "C2934",
+    "to_station": "开封",
+    "total_num": "3",
+    "train_no": "38000C293410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2935",
+    "to_station": "郑州东",
+    "total_num": "4",
+    "train_no": "38000C29350F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州航空港",
+    "station_train_code": "C2936",
+    "to_station": "开封",
+    "total_num": "6",
+    "train_no": "38000C293610"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2937",
+    "to_station": "郑州航空港",
+    "total_num": "6",
+    "train_no": "38000C29370C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州东",
+    "station_train_code": "C2938",
+    "to_station": "开封",
+    "total_num": "4",
+    "train_no": "38000C29380C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2939",
+    "to_station": "新郑机场",
+    "total_num": "6",
+    "train_no": "38000C29390V"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州航空港",
+    "station_train_code": "C2940",
+    "to_station": "开封",
+    "total_num": "6",
+    "train_no": "38000C29400H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2941",
+    "to_station": "郑州东",
+    "total_num": "3",
+    "train_no": "38000C29410N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "新郑机场",
+    "station_train_code": "C2942",
+    "to_station": "开封",
+    "total_num": "5",
+    "train_no": "38000C29420P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大理",
+    "station_train_code": "C319",
+    "to_station": "丽江",
+    "total_num": "2",
+    "train_no": "8c0000C3190B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沈阳",
+    "station_train_code": "D7683",
+    "to_station": "丹东",
+    "total_num": "6",
+    "train_no": "12000D768329"
+  },
+  {
+    "date": "20261113",
+    "from_station": "丹东",
+    "station_train_code": "D7684",
+    "to_station": "沈阳",
+    "total_num": "3",
+    "train_no": "12000D768428"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2121",
+    "to_station": "天津西",
+    "total_num": "3",
+    "train_no": "24000C21210F"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2127",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000C21270N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "C2128",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C21280M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "C2132",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C213212"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2133",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000C213323"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "C2134",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C21342A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2137",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000C213723"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2141",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000C214105"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "C2161",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000C216117"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "C2162",
+    "to_station": "北京南",
+    "total_num": "2",
+    "train_no": "25000C216218"
+  },
+  {
+    "date": "20261113",
+    "from_station": "石泉县",
+    "station_train_code": "C189",
+    "to_station": "西安",
+    "total_num": "6",
+    "train_no": "430000C1920Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山西",
+    "station_train_code": "D7131",
+    "to_station": "珠海",
+    "total_num": "3",
+    "train_no": "70000D71310N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "D7197",
+    "to_station": "汕头",
+    "total_num": "7",
+    "train_no": "6i000D72000A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汕头",
+    "station_train_code": "D7198",
+    "to_station": "深圳",
+    "total_num": "11",
+    "train_no": "67000D71980G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汕头",
+    "station_train_code": "D7199",
+    "to_station": "深圳",
+    "total_num": "11",
+    "train_no": "67000D71980G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "D7200",
+    "to_station": "汕头",
+    "total_num": "7",
+    "train_no": "6i000D72000A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "G8659",
+    "to_station": "重庆西",
+    "total_num": "3",
+    "train_no": "76000G86590N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "凯里南",
+    "station_train_code": "G5403",
+    "to_station": "贵阳北",
+    "total_num": "2",
+    "train_no": "78000G540301"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "G5404",
+    "to_station": "凯里南",
+    "total_num": "2",
+    "train_no": "78000G540401"
+  },
+  {
+    "date": "20261113",
+    "from_station": "曹县西",
+    "station_train_code": "G5450",
+    "to_station": "曲阜东",
+    "total_num": "4",
+    "train_no": "47000G545000"
+  },
+  {
+    "date": "20261113",
+    "from_station": "曲阜东",
+    "station_train_code": "G5451",
+    "to_station": "菏泽东",
+    "total_num": "5",
+    "train_no": "4p000G545100"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南东",
+    "station_train_code": "G5452",
+    "to_station": "曹县西",
+    "total_num": "9",
+    "train_no": "47000G545200"
+  },
+  {
+    "date": "20261113",
+    "from_station": "济南东",
+    "station_train_code": "G5453",
+    "to_station": "曹县西",
+    "total_num": "9",
+    "train_no": "47000G545200"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南宁东",
+    "station_train_code": "D3970",
+    "to_station": "重庆东",
+    "total_num": "28",
+    "train_no": "71000D397004"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G3306",
+    "to_station": "日照",
+    "total_num": "13",
+    "train_no": "4e000G330602"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G3349",
+    "to_station": "成都东",
+    "total_num": "9",
+    "train_no": "4f000G334900"
+  },
+  {
+    "date": "20261113",
+    "from_station": "福州",
+    "station_train_code": "D6532",
+    "to_station": "泰宁",
+    "total_num": "6",
+    "train_no": "58000D653230"
+  },
+  {
+    "date": "20261113",
+    "from_station": "番禺",
+    "station_train_code": "C7513",
+    "to_station": "沥林北",
+    "total_num": "18",
+    "train_no": "6t000C751309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "沥林北",
+    "station_train_code": "C7514",
+    "to_station": "番禺",
+    "total_num": "18",
+    "train_no": "6t000C75140D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "番禺",
+    "station_train_code": "C7515",
+    "to_station": "惠州北",
+    "total_num": "25",
+    "train_no": "6t000C751508"
+  },
+  {
+    "date": "20261113",
+    "from_station": "惠州北",
+    "station_train_code": "C7562",
+    "to_station": "番禺",
+    "total_num": "25",
+    "train_no": "6t000C75620A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D3806",
+    "to_station": "昆明南",
+    "total_num": "13",
+    "train_no": "6c000D38061A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "广州南",
+    "station_train_code": "D3807",
+    "to_station": "昆明南",
+    "total_num": "13",
+    "train_no": "6c000D38061A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "D3857",
+    "to_station": "广州南",
+    "total_num": "12",
+    "train_no": "80000D386012"
+  },
+  {
+    "date": "20261113",
+    "from_station": "昆明南",
+    "station_train_code": "D3860",
+    "to_station": "广州南",
+    "total_num": "12",
+    "train_no": "80000D386012"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "G897",
+    "to_station": "香港西九龙",
+    "total_num": "6",
+    "train_no": "240000G8970A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "香港西九龙",
+    "station_train_code": "G898",
+    "to_station": "北京西",
+    "total_num": "6",
+    "train_no": "6x0000G89806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "上海虹桥",
+    "station_train_code": "G899",
+    "to_station": "香港西九龙",
+    "total_num": "5",
+    "train_no": "5l0000G89900"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "G8905",
+    "to_station": "天津西",
+    "total_num": "2",
+    "train_no": "24000G89050M"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京南",
+    "station_train_code": "G8945",
+    "to_station": "天津",
+    "total_num": "2",
+    "train_no": "24000G894510"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京南",
+    "station_train_code": "G8973",
+    "to_station": "太仓",
+    "total_num": "6",
+    "train_no": "5l000G897307"
+  },
+  {
+    "date": "20261113",
+    "from_station": "太仓",
+    "station_train_code": "G8974",
+    "to_station": "南京南",
+    "total_num": "6",
+    "train_no": "55000G897400"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京南",
+    "station_train_code": "G8985",
+    "to_station": "张家港",
+    "total_num": "5",
+    "train_no": "5l000G898560"
+  },
+  {
+    "date": "20261113",
+    "from_station": "张家港",
+    "station_train_code": "G8986",
+    "to_station": "南京南",
+    "total_num": "4",
+    "train_no": "55000G898660"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大理",
+    "station_train_code": "D8717",
+    "to_station": "昆明南",
+    "total_num": "5",
+    "train_no": "8c000D87202A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "大理",
+    "station_train_code": "D8720",
+    "to_station": "昆明南",
+    "total_num": "5",
+    "train_no": "8c000D87202A"
+  },
+  {
+    "date": "20261113",
+    "from_station": "普者黑",
+    "station_train_code": "D8722",
+    "to_station": "大理",
+    "total_num": "8",
+    "train_no": "80000D872327"
+  },
+  {
+    "date": "20261113",
+    "from_station": "普者黑",
+    "station_train_code": "D8723",
+    "to_station": "大理",
+    "total_num": "8",
+    "train_no": "80000D872327"
+  },
+  {
+    "date": "20261113",
+    "from_station": "徐州东",
+    "station_train_code": "G8381",
+    "to_station": "南京",
+    "total_num": "5",
+    "train_no": "5l000G8381D1"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "G8382",
+    "to_station": "徐州东",
+    "total_num": "6",
+    "train_no": "54000G838309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京",
+    "station_train_code": "G8383",
+    "to_station": "徐州东",
+    "total_num": "6",
+    "train_no": "54000G838309"
+  },
+  {
+    "date": "20261113",
+    "from_station": "徐州东",
+    "station_train_code": "G8384",
+    "to_station": "南京",
+    "total_num": "5",
+    "train_no": "5l000G8381D1"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安东",
+    "station_train_code": "G3916",
+    "to_station": "汉口",
+    "total_num": "11",
+    "train_no": "41000G391600"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津西",
+    "station_train_code": "G889",
+    "to_station": "上海虹桥",
+    "total_num": "13",
+    "train_no": "250000G88905"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "G8857",
+    "to_station": "天津西",
+    "total_num": "6",
+    "train_no": "24000G885709"
+  },
+  {
+    "date": "20261113",
+    "from_station": "天津",
+    "station_train_code": "G8858",
+    "to_station": "北京西",
+    "total_num": "4",
+    "train_no": "25000G885820"
+  },
+  {
+    "date": "20261113",
+    "from_station": "深圳北",
+    "station_train_code": "G6026",
+    "to_station": "长沙南",
+    "total_num": "9",
+    "train_no": "6i000G60260X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "长沙南",
+    "station_train_code": "G6053",
+    "to_station": "深圳北",
+    "total_num": "9",
+    "train_no": "6c000G605302"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G1101",
+    "to_station": "佛山",
+    "total_num": "10",
+    "train_no": "4e000G110140"
+  },
+  {
+    "date": "20261113",
+    "from_station": "佛山",
+    "station_train_code": "G1108",
+    "to_station": "武汉",
+    "total_num": "9",
+    "train_no": "6u000G110801"
+  },
+  {
+    "date": "20261113",
+    "from_station": "桂林北",
+    "station_train_code": "G1518",
+    "to_station": "太原南",
+    "total_num": "26",
+    "train_no": "71000G15180H"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宿迁",
+    "station_train_code": "D5475",
+    "to_station": "南京南",
+    "total_num": "4",
+    "train_no": "5f000D547501"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京南",
+    "station_train_code": "D5476",
+    "to_station": "宿迁",
+    "total_num": "3",
+    "train_no": "5l000D547703"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南京南",
+    "station_train_code": "D5477",
+    "to_station": "宿迁",
+    "total_num": "3",
+    "train_no": "5l000D547703"
+  },
+  {
+    "date": "20261113",
+    "from_station": "宿迁",
+    "station_train_code": "D5478",
+    "to_station": "南京南",
+    "total_num": "4",
+    "train_no": "5f000D547501"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙口市",
+    "station_train_code": "C6501",
+    "to_station": "青岛北",
+    "total_num": "10",
+    "train_no": "4k000C650110"
+  },
+  {
+    "date": "20261113",
+    "from_station": "龙口市",
+    "station_train_code": "C6504",
+    "to_station": "青岛北",
+    "total_num": "10",
+    "train_no": "4k000C650110"
+  },
+  {
+    "date": "20261113",
+    "from_station": "青岛",
+    "station_train_code": "C6506",
+    "to_station": "龙口市",
+    "total_num": "8",
+    "train_no": "49000C650620"
+  },
+  {
+    "date": "20261113",
+    "from_station": "青岛",
+    "station_train_code": "C6507",
+    "to_station": "龙口市",
+    "total_num": "8",
+    "train_no": "49000C650620"
+  },
+  {
+    "date": "20261113",
+    "from_station": "青岛北",
+    "station_train_code": "C6511",
+    "to_station": "威海",
+    "total_num": "5",
+    "train_no": "49000C651110"
+  },
+  {
+    "date": "20261113",
+    "from_station": "牟平",
+    "station_train_code": "C6525",
+    "to_station": "青岛",
+    "total_num": "9",
+    "train_no": "49000C652850"
+  },
+  {
+    "date": "20261113",
+    "from_station": "牟平",
+    "station_train_code": "C6528",
+    "to_station": "青岛",
+    "total_num": "9",
+    "train_no": "49000C652850"
+  },
+  {
+    "date": "20261113",
+    "from_station": "青岛北",
+    "station_train_code": "C6555",
+    "to_station": "牟平",
+    "total_num": "6",
+    "train_no": "49000C655520"
+  },
+  {
+    "date": "20261113",
+    "from_station": "厦门北",
+    "station_train_code": "G1612",
+    "to_station": "合肥南",
+    "total_num": "17",
+    "train_no": "5n000G16120N"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "D5101",
+    "to_station": "成都东",
+    "total_num": "5",
+    "train_no": "77000D51010X"
+  },
+  {
+    "date": "20261113",
+    "from_station": "成都东",
+    "station_train_code": "D5102",
+    "to_station": "重庆北",
+    "total_num": "5",
+    "train_no": "76000D51023C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "重庆北",
+    "station_train_code": "D5131",
+    "to_station": "潼南",
+    "total_num": "2",
+    "train_no": "77000D5131C0"
+  },
+  {
+    "date": "20261113",
+    "from_station": "潼南",
+    "station_train_code": "D5132",
+    "to_station": "重庆北",
+    "total_num": "3",
+    "train_no": "77000D513260"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京西",
+    "station_train_code": "K117",
+    "to_station": "成都龙泉驿",
+    "total_num": "20",
+    "train_no": "240000K11710"
+  },
+  {
+    "date": "20261113",
+    "from_station": "潼南",
+    "station_train_code": "D8555",
+    "to_station": "贵阳北",
+    "total_num": "11",
+    "train_no": "77000D855800"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "D8556",
+    "to_station": "潼南",
+    "total_num": "4",
+    "train_no": "78000D855620"
+  },
+  {
+    "date": "20261113",
+    "from_station": "贵阳北",
+    "station_train_code": "D8557",
+    "to_station": "潼南",
+    "total_num": "4",
+    "train_no": "78000D855620"
+  },
+  {
+    "date": "20261113",
+    "from_station": "潼南",
+    "station_train_code": "D8558",
+    "to_station": "贵阳北",
+    "total_num": "11",
+    "train_no": "77000D855800"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6839",
+    "to_station": "襄阳东",
+    "total_num": "3",
+    "train_no": "39000G683909"
+  },
+  {
+    "date": "20261113",
+    "from_station": "汉口",
+    "station_train_code": "G6885",
+    "to_station": "云梦东",
+    "total_num": "3",
+    "train_no": "39000G688508"
+  },
+  {
+    "date": "20261113",
+    "from_station": "云梦东",
+    "station_train_code": "G6886",
+    "to_station": "汉口",
+    "total_num": "3",
+    "train_no": "4r000G68860B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南阳寨",
+    "station_train_code": "C2818",
+    "to_station": "焦作",
+    "total_num": "3",
+    "train_no": "38000C281806"
+  },
+  {
+    "date": "20261113",
+    "from_station": "焦作",
+    "station_train_code": "C2819",
+    "to_station": "南阳寨",
+    "total_num": "2",
+    "train_no": "38000C281909"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2851",
+    "to_station": "郑州航空港",
+    "total_num": "7",
+    "train_no": "38000C28510R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州东",
+    "station_train_code": "C2852",
+    "to_station": "开封",
+    "total_num": "3",
+    "train_no": "38000C28520Q"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2853",
+    "to_station": "郑州东",
+    "total_num": "4",
+    "train_no": "38000C28530P"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州航空港",
+    "station_train_code": "C2854",
+    "to_station": "开封",
+    "total_num": "6",
+    "train_no": "38000C285410"
+  },
+  {
+    "date": "20261113",
+    "from_station": "开封",
+    "station_train_code": "C2855",
+    "to_station": "新郑机场",
+    "total_num": "7",
+    "train_no": "38000C28550R"
+  },
+  {
+    "date": "20261113",
+    "from_station": "郑州东",
+    "station_train_code": "C2856",
+    "to_station": "开封",
+    "total_num": "4",
+    "train_no": "38000C28560U"
+  },
+  {
+    "date": "20261113",
+    "from_station": "新郑机场",
+    "station_train_code": "C2858",
+    "to_station": "郑州东",
+    "total_num": "2",
+    "train_no": "38000C28580B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G3155",
+    "to_station": "南昌西",
+    "total_num": "16",
+    "train_no": "4f000G31580G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "西安北",
+    "station_train_code": "G3158",
+    "to_station": "南昌西",
+    "total_num": "16",
+    "train_no": "4f000G31580G"
+  },
+  {
+    "date": "20261113",
+    "from_station": "南昌西",
+    "station_train_code": "D6252",
+    "to_station": "景德镇北",
+    "total_num": "5",
+    "train_no": "5u000D625215"
+  },
+  {
+    "date": "20261113",
+    "from_station": "景德镇北",
+    "station_train_code": "D6253",
+    "to_station": "南昌西",
+    "total_num": "4",
+    "train_no": "57000D62531B"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G1785",
+    "to_station": "上海虹桥",
+    "total_num": "11",
+    "train_no": "4e000G178818"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "G1788",
+    "to_station": "上海虹桥",
+    "total_num": "11",
+    "train_no": "4e000G178818"
+  },
+  {
+    "date": "20261113",
+    "from_station": "日照",
+    "station_train_code": "G1057",
+    "to_station": "北京南",
+    "total_num": "10",
+    "train_no": "47000G105703"
+  },
+  {
+    "date": "20261113",
+    "from_station": "日照",
+    "station_train_code": "G1060",
+    "to_station": "北京南",
+    "total_num": "10",
+    "train_no": "47000G105703"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "C5627",
+    "to_station": "蕲春南",
+    "total_num": "5",
+    "train_no": "4e000C56270C"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武汉",
+    "station_train_code": "C5631",
+    "to_station": "黄冈东",
+    "total_num": "2",
+    "train_no": "4e000C56310D"
+  },
+  {
+    "date": "20261113",
+    "from_station": "武穴北",
+    "station_train_code": "C5632",
+    "to_station": "武汉",
+    "total_num": "5",
+    "train_no": "39000C563209"
+  },
+  {
+    "date": "20261113",
+    "from_station": "北京朝阳",
+    "station_train_code": "G3505",
+    "to_station": "哈尔滨西",
+    "total_num": "10",
+    "train_no": "24000G350508"
+  },
+  {
+    "date": "20261113",
+    "from_station": "哈尔滨西",
+    "station_train_code": "G3520",
+    "to_station": "北京朝阳",
+    "total_num": "9",
+    "train_no": "0h000G35200A"
+  }
+]
