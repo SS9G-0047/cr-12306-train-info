@@ -42,9 +42,11 @@ type PreviousReleaseData = {
   trainDetails: TrainDetailEntry[];
   stoppedTrains: StoppedTrainEntry[];
   stoppedDetails: TrainDetailEntry[];
+  fullSnapshotDate: string;
 };
 
 const FULL_REFRESH_TRAIN_CODE_CHANGE_RATE = 0.1;
+const FULL_REFRESH_MAX_SNAPSHOT_AGE_DAYS = 10;
 
 class Spider {
   /**
@@ -93,7 +95,7 @@ class Spider {
   private targetDate = "";
 
   /** 失败请求最大重试轮数 */
-  private static readonly MAX_RETRY_ROUNDS = 5;
+  private static readonly MAX_RETRY_ROUNDS = 10;
 
   /**
    * 运行爬虫（主请求 + 失败请求按偏移分散重试，最多重试 MAX_RETRY_ROUNDS 轮）
@@ -322,6 +324,16 @@ class Spider {
     const d = new Date(y, m, day);
     d.setDate(d.getDate() - 1);
     return `${d.getFullYear()}${String(d.getMonth() + 1).padStart(2, "0")}${String(d.getDate()).padStart(2, "0")}`;
+  };
+
+  private dateDifferenceInDays = (fromYmd: string, toYmd: string): number => {
+    const parseYmd = (ymd: string) =>
+      Date.UTC(
+        Number(ymd.slice(0, 4)),
+        Number(ymd.slice(4, 6)) - 1,
+        Number(ymd.slice(6, 8)),
+      );
+    return Math.floor((parseYmd(toYmd) - parseYmd(fromYmd)) / 86400000);
   };
 
   private fetchLatestReleaseData = async (): Promise<PreviousReleaseData | null> => {
@@ -664,6 +676,7 @@ class Spider {
       trainDetails,
       stoppedTrains,
       stoppedDetails,
+      fullSnapshotDate: baselineRelease.tag_name.slice("data-".length),
     };
   };
 
@@ -674,7 +687,11 @@ class Spider {
     const previousData = this.previousReleaseData;
     const previousTrainCodes = new Map<string, Set<string>>();
     const previousStationTrainCodes = new Set<string>(
-      (previousData?.trainList ?? []).map((train) => train.station_train_code),
+      (previousData?.trainList ?? [])
+        .filter((train) =>
+          this.isTrainCodeIncludedForTargetDate(train.station_train_code),
+        )
+        .map((train) => train.station_train_code),
     );
     const currentStationTrainCodes = new Set(
       Array.from(this.trainList, (train) => train.station_train_code),
@@ -684,18 +701,38 @@ class Spider {
     const previousStoppedDetails = new Map<string, TrainDetailEntry>();
 
     for (const train of previousData?.trainList ?? []) {
+      if (
+        !this.isTrainCodeIncludedForTargetDate(train.station_train_code)
+      ) {
+        continue;
+      }
       const codes = previousTrainCodes.get(train.train_no) ?? new Set<string>();
       codes.add(train.station_train_code);
       previousTrainCodes.set(train.train_no, codes);
     }
     for (const entry of previousData?.trainDetails ?? []) {
+      if (
+        !this.isTrainCodeIncludedForTargetDate(entry.station_train_codes)
+      ) {
+        continue;
+      }
       previousDetails.set(entry.train_no, entry);
     }
     for (const entry of previousData?.stoppedDetails ?? []) {
+      if (
+        !this.isTrainCodeIncludedForTargetDate(entry.station_train_codes)
+      ) {
+        continue;
+      }
       previousStoppedDetails.set(entry.train_no, entry);
     }
     const previousTrainListByNo = new Map<string, ITrain[]>();
     for (const train of previousData?.trainList ?? []) {
+      if (
+        !this.isTrainCodeIncludedForTargetDate(train.station_train_code)
+      ) {
+        continue;
+      }
       const entries = previousTrainListByNo.get(train.train_no) ?? [];
       entries.push(train);
       previousTrainListByNo.set(train.train_no, entries);
@@ -705,6 +742,11 @@ class Spider {
     const retentionMs = 14 * 24 * 60 * 60 * 1000;
     const resumedStopped = new Set<string>();
     for (const entry of previousData?.stoppedTrains ?? []) {
+      if (
+        !this.isTrainCodeIncludedForTargetDate(entry.station_train_codes)
+      ) {
+        continue;
+      }
       const stoppedTime = Date.parse(entry.stopped_at);
       const stoppedAge = now.getTime() - stoppedTime;
       const detailData =
@@ -782,9 +824,19 @@ class Spider {
         : currentStationTrainCodes.size > 0
           ? 1
           : 0;
-    const shouldRefreshAll =
-      !previousData ||
+    const snapshotAgeDays = previousData
+      ? this.dateDifferenceInDays(
+          previousData.fullSnapshotDate,
+          this.targetDate,
+        )
+      : null;
+    const snapshotExpired =
+      snapshotAgeDays !== null &&
+      snapshotAgeDays >= FULL_REFRESH_MAX_SNAPSHOT_AGE_DAYS;
+    const changeRateRequiresFullRefresh =
       trainCodeChangeRate >= FULL_REFRESH_TRAIN_CODE_CHANGE_RATE;
+    const shouldRefreshAll =
+      !previousData || changeRateRequiresFullRefresh || snapshotExpired;
     this.isFullRefresh = shouldRefreshAll;
     this.trainDetailRefreshTrainNos = shouldRefreshAll
       ? new Set(
@@ -818,10 +870,15 @@ class Spider {
 
     const refreshMode = shouldRefreshAll ? "全量抓取" : "增量抓取";
     const changeReason = previousData
-      ? `traincode变化 ${changedTrainCodeCount}/${previousStationTrainCodes.size} (${(trainCodeChangeRate * 100).toFixed(2)}%，新增 ${addedTrainCodes.length}、移除 ${removedTrainCodes.length}，阈值 ${(FULL_REFRESH_TRAIN_CODE_CHANGE_RATE * 100).toFixed(0)}%)`
+      ? `traincode变化 ${changedTrainCodeCount}/${previousStationTrainCodes.size} (${(trainCodeChangeRate * 100).toFixed(2)}%，新增 ${addedTrainCodes.length}、移除 ${removedTrainCodes.length}，阈值 ${(FULL_REFRESH_TRAIN_CODE_CHANGE_RATE * 100).toFixed(0)}%)；距完整快照 ${previousData.fullSnapshotDate} 已 ${snapshotAgeDays ?? 0} 天（${FULL_REFRESH_MAX_SNAPSHOT_AGE_DAYS} 天强制全量）`
       : "没有历史Release";
+    const refreshTriggers = [
+      !previousData ? "没有历史Release" : "",
+      changeRateRequiresFullRefresh ? "traincode变化率达到阈值" : "",
+      snapshotExpired ? "完整快照已超过10天" : "",
+    ].filter(Boolean);
     console.log(
-      `[详情抓取模式] ${refreshMode}：${changeReason}；待请求详情 ${this.trainDetailRefreshTrainNos.size}/${currentTrainNos.size}，复用已有详情 ${this.trainDetailReusedCount} 条`,
+      `[详情抓取模式] ${refreshMode}：${changeReason}${refreshTriggers.length > 0 ? `；触发原因: ${refreshTriggers.join("、")}` : ""}；待请求详情 ${this.trainDetailRefreshTrainNos.size}/${currentTrainNos.size}，复用已有详情 ${this.trainDetailReusedCount} 条`,
     );
 
     for (const train of this.trainListFilteredByTrainNo) {
@@ -1258,6 +1315,14 @@ class Spider {
     /^\d/.test(stationTrainCode)
       ? "NUMERIC"
       : (stationTrainCode || "").charAt(0).toUpperCase() || "OTHER";
+
+  private isTrainCodeIncludedForTargetDate = (
+    stationTrainCode: string,
+  ): boolean => {
+    if (this.targetDate < "20261125") return true;
+    const trainClass = this.getTrainClass(stationTrainCode);
+    return trainClass !== "L" && trainClass !== "NUMERIC";
+  };
 
   /**
    * 根据 trainDetailList 生成车次详情 markdown 表格到 dist/train_detail.md

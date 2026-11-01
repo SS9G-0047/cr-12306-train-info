@@ -6,8 +6,8 @@
 
 - **车次列表抓取**：目标日期早于 2026-11-25 时按车次等级（G/D/C/K/Z/T/L/Y/S）与纯数字 0-9 前缀递归查询；目标日期为 2026-11-25 及以后时改抓（G/D/C/K/Z/T/S/Y/N/V/X），不抓 L 字头和纯数字车次。单次返回少于 200 条视为该前缀已完整并立即持久化
 - **并发控制**：车次详情查询通过任务调度器 `TaskScheduler` 自适应调整并发（范围 2 ~ 6），成功率高自动提速，失败率高自动降速，任务启动随机延迟降低被识别概率
-- **失败重试**：请求失败会进入失败队列，在主抓取结束后按轮重试，最多 5 轮
-- **车次详情增量更新**：先读取当前仓库最近的 `data-YYYYMMDD` Release，比较前后 `station_train_code` 集合；变化（新增与移除代码数之和）达到上一 Release 代码总数的 10% 时全量重抓，低于 10% 时仅重新查询变化车次。运行日志会输出变化数、比例和抓取模式；没有历史数据时全量抓取
+- **失败重试**：请求失败会进入失败队列，在主抓取结束后按轮重试，最多 10 轮
+- **车次详情增量更新**：先读取当前仓库最近的 `data-YYYYMMDD` Release，比较前后 `station_train_code` 集合；变化（新增与移除代码数之和）达到上一完整快照代码总数的 10%，或距离上一完整快照达到 10 天时全量重抓，否则仅重新查询变化车次。运行日志会输出变化数、比例、快照年龄和抓取模式；没有历史数据时全量抓取
 - **停运车次保留**：从本次列表消失的车次会从活动详情 JSON 移除，车次信息写入 `stopped.json`、详情写入 `stopped_detail.json`；两周内重新出现时直接复用已保存详情，连续两周未出现则从停运文件永久删除
 - **新停运车次快照**：`stop_temp.json` 和 `stop_temp_detail.json` 只记录本次从上一快照正常开行变为缺失的车次及其详情
 - **车次详情最终失败补偿**：当车次详情接口在重试结束后仍失败，会尝试从 HerbertHe 仓库前一日 Release 的 `train_detail_YYYYMMDD.json` 拉取数据，按 `train_no` 相同进行补偿回填（补偿日口径为「当前日期 + 13 天」的前一日，即 `targetDate - 1 day`）
@@ -24,7 +24,7 @@
 - **停运车次输出**：`dist/stopped.json`（停运车次及停运时间）、`dist/stopped_detail.json`（对应详情）
 - **本次转停运输出**：`dist/stop_temp.json`（上次正常开行的车次列表记录）、`dist/stop_temp_detail.json`（对应经停详情）
 - **数字车次详情**：所有纯数字车次统一写入 `dist/train_detail_NUMERIC_YYYYMMDD.json` / `.md`
-- **Release 文件策略**：全量抓取时上传全部 JSON；增量抓取时上传新增、停运及本次新转停运文件，包括 `new.json`、`new_detail.json`、`stopped.json`、`stopped_detail.json`、`stop_temp.json`、`stop_temp_detail.json`
+- **Release 文件策略**：全量抓取时上传全部当前有效 JSON；目标日期为 2026-11-25 及以后时不上传已取消抓取的 L 字头和纯数字车次分组详情 JSON；增量抓取时上传新增、停运及本次新转停运文件，包括 `new.json`、`new_detail.json`、`stopped.json`、`stopped_detail.json`、`stop_temp.json`、`stop_temp_detail.json`
 - **运行报告**：
   - GitHub Pages：`dist/README.md`
   - 统计摘要：`dist/summary.json`（用于 GitHub Action 写入 release 描述）

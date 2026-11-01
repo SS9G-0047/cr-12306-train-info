@@ -91,8 +91,16 @@ jobs:
         id: release-assets
         run: |
           if jq -e '.fullRefresh == true' dist/summary.json >/dev/null; then
-            echo "Full refresh: uploading all JSON assets"
-            FILES=$(find dist -maxdepth 1 -type f -name '*.json' -print | sort)
+            if [ "$TARGET_DATE" -ge 20261125 ]; then
+              echo "Full refresh: uploading all active JSON assets (excluding retired L/numeric train classes)"
+              FILES=$(find dist -maxdepth 1 -type f -name '*.json' \
+                ! -name 'train_detail_L_*.json' \
+                ! -name 'train_detail_NUMERIC_*.json' \
+                -print | sort)
+            else
+              echo "Full refresh: uploading all JSON assets"
+              FILES=$(find dist -maxdepth 1 -type f -name '*.json' -print | sort)
+            fi
           else
             echo "Incremental refresh: uploading new/stopped JSON assets"
             FILES=""
