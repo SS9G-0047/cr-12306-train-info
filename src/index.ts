@@ -229,7 +229,7 @@ class Spider {
 
   /**
    * 获取所有车次列表
-   * 遍历所有车次等级的 0 - 9 前缀，以及纯数字车次的 0 - 9 前缀
+   * 2026-11-25 起增加 N/V/X 字头，并停止扫描纯数字车次前缀。
    * 日期默认使用当前日期 + 13 天
    */
   private fetchTrainList = async () => {
@@ -237,14 +237,29 @@ class Spider {
     const promises: Promise<void>[] = [];
 
     const numbers = this.shuffleArray(Array.from({ length: 10 }, (_, i) => i));
+    const useNewTrainClasses = this.targetDate >= "20261125";
+    const trainClasses = useNewTrainClasses
+      ? [
+          ...TRAIN_CLASS_LIST.filter((trainClass) => trainClass !== "L"),
+          "N",
+          "V",
+          "X",
+        ]
+      : TRAIN_CLASS_LIST;
 
-    for (const trainClass of TRAIN_CLASS_LIST) {
+    console.log(
+      `[车次前缀] 目标日期 ${this.targetDate}，扫描字头: ${trainClasses.join("/")}; L字头: ${useNewTrainClasses ? "跳过" : "扫描"}; 纯数字车次: ${useNewTrainClasses ? "跳过" : "扫描"}`,
+    );
+
+    for (const trainClass of trainClasses) {
       for (const i of numbers) {
         promises.push(this.processTrainList(`${trainClass}${i}`, this.targetDate));
       }
     }
-    for (const i of numbers) {
-      promises.push(this.processTrainList(String(i), this.targetDate));
+    if (!useNewTrainClasses) {
+      for (const i of numbers) {
+        promises.push(this.processTrainList(String(i), this.targetDate));
+      }
     }
 
     await Promise.all(promises);
