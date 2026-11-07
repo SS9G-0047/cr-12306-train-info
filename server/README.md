@@ -49,7 +49,7 @@ POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 
 ### 大文件分片（避免 Cloudflare 524 / 网关 100s 超时）
 
-超过 `chunk_size_mb`（默认 4 MB）的文件会拆成多个请求，单片失败只重传该片：
+压缩后超过 2 MB 的文件会拆成多个请求，单片失败只重传该片：
 
 ```text
 POST snapshot_date=20261106 batch_id=<uuid> chunk_of=train_detail_20261106.json.gz
@@ -61,8 +61,8 @@ POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 - 分片以 `<name>.json.gz.p<index>` 落在 `.staging/<batch_id>/`
 - `finalize` 时按序号拼回 `.json.gz`，再解压成 `.json`；序号必须连续（缺片返回 `400 invalid package`）
 - 拼接和解压完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
-- 爬虫遇到 524/超时会自动把分片减半（4 → 2 → 1 → 512KB → … → 256KB）并换新 `batch_id` 重传，不需要手工调
-- 也可以直接在 `upload.json` 里把 `chunk_size_mb` 设成更小的值（支持 `1`、`0.5`）
+- 分片大小固定 2 MB（按压缩后字节计），不再随配置或失败调整
+- 单个分片失败重试 6 次；仍失败则整批放弃，不会无限重传
 
 ### GET /api/latest
 
@@ -361,7 +361,6 @@ location / {
 ```
 
 `upload_mode` 默认 `per_file`（逐文件 + finalize）；服务端还是旧版整包接口时改成 `"single"`。
-`chunk_size_mb` 可选，默认 `4`，只在 `per_file` 下生效，越大请求越少、越小越抗网关超时。
 
 GitHub App：
 

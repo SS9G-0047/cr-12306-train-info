@@ -24,8 +24,6 @@ type DeliveryConfig = {
   latestToken?: string;
   /** per_file（默认，逐个文件上传后 finalize）或 single（整包单请求，兼容旧服务端） */
   uploadMode: "per_file" | "single";
-  /** 大文件分片大小（MB），默认 4；小于该值的文件仍单请求上传 */
-  chunkSizeMb: number;
 };
 
 const CONFIG_REPO = (process.env.CONFIG_REPO ?? "").trim();
@@ -121,7 +119,6 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     latest_url?: unknown;
     latest_token?: unknown;
     upload_mode?: unknown;
-    chunk_size_mb?: unknown;
   };
   if (
     typeof config?.upload_url !== "string" ||
@@ -142,8 +139,6 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
   // 默认逐文件上传；旧服务端只支持整包单请求时配置 upload_mode: "single"
   const uploadMode: "per_file" | "single" =
     config.upload_mode === "single" ? "single" : "per_file";
-  const rawChunkSize = Number(config.chunk_size_mb);
-  const chunkSizeMb = Number.isFinite(rawChunkSize) && rawChunkSize > 0 ? rawChunkSize : 4;
   console.log(
     `[交付] 已读取私有仓配置 ${CONFIG_REPO}/${usedPath}：upload_mode=${uploadMode}，latest_url ${latestUrl ? "已配置" : "未配置"}`,
   );
@@ -153,7 +148,6 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     latestUrl,
     latestToken,
     uploadMode,
-    chunkSizeMb,
   };
 };
 
@@ -326,8 +320,8 @@ const wait = (ms: number): Promise<void> =>
 const PER_FILE_TIMEOUT_MS = 900_000;
 const SINGLE_TIMEOUT_MS = 600_000;
 const FINALIZE_TIMEOUT_MS = 120_000;
-/** 网关持续超时时分片可以缩到的最小粒度 */
-const MIN_CHUNK_BYTES = 256 * 1024;
+/** 上传分片固定 2 MB，不随配置或失败自适应 */
+const UPLOAD_CHUNK_BYTES = 2 * 1024 * 1024;
 
 const postForm = async (
   config: DeliveryConfig,
@@ -371,12 +365,6 @@ const isGatewayTimeout = (error: unknown): boolean => {
   return /\b524\b/.test(message) || /timed out|timeout|aborted/i.test(message);
 };
 
-/** 网关/源站不健康：524 超时，或 502/503/504 网关错误 */
-const isGatewayError = (error: unknown): boolean => {
-  const message = error instanceof Error ? error.message : String(error);
-  return isGatewayTimeout(error) || /\b(502|503|504)\b/.test(message);
-};
-
 const markSlowGateway = <T>(error: T): T => {
   if (error && typeof error === "object") {
     (error as Record<string, unknown>)[SLOW_GATEWAY] = true;
@@ -395,19 +383,6 @@ const uploadRequest = async (
     await postForm(config, form, snapshotDate, timeoutMs);
   } catch (error) {
     if (isGatewayTimeout(error)) throw markSlowGateway(error);
-    throw error;
-  }
-};
-
-/** 上传文件/分片：重试耗尽后仍为网关错误时，标记为链路问题，交给外层缩片重传 */
-const uploadWithAdaptive = async (
-  label: string,
-  action: () => Promise<void>,
-): Promise<void> => {
-  try {
-    await withRetry(label, action);
-  } catch (error) {
-    if (isGatewayError(error)) throw markSlowGateway(error);
     throw error;
   }
 };
@@ -467,11 +442,7 @@ export const uploadFullPackage = async (
 
   if (config.uploadMode === "per_file") {
     const startedAt = Date.now();
-    const initialChunkBytes = Math.max(
-      MIN_CHUNK_BYTES,
-      Math.round(config.chunkSizeMb * 1024 * 1024),
-    );
-    let chunkBytes = initialChunkBytes;
+    const chunkBytes = UPLOAD_CHUNK_BYTES;
 
     const uploadFile = async (
       batchId: string,
@@ -490,7 +461,7 @@ export const uploadFullPackage = async (
         console.log(
           `[交付] 上传 ${index + 1}/${files.length} ${name}（${rawMegabytes} MB → gzip ${megabytes} MB）`,
         );
-        await uploadWithAdaptive(`上传 ${name}`, async () => {
+        await withRetry(`上传 ${name}`, async () => {
           const form = new FormData();
           form.append("snapshot_date", snapshotDate);
           form.append("batch_id", batchId);
@@ -520,7 +491,7 @@ export const uploadFullPackage = async (
         const blob = new Blob([new Uint8Array(slice)], {
           type: "application/octet-stream",
         });
-        await uploadWithAdaptive(
+        await withRetry(
           `上传 ${name} 分片 ${part}/${chunkTotal}`,
           async () => {
             const form = new FormData();
@@ -554,22 +525,7 @@ export const uploadFullPackage = async (
       });
     };
 
-    // 网关超时且分片已到下限时放弃；否则分片减半、换新 batch_id 重传
-    for (;;) {
-      try {
-        await sendBatch();
-        break;
-      } catch (error) {
-        if (!isSlowGateway(error) || chunkBytes <= MIN_CHUNK_BYTES) throw error;
-        chunkBytes = Math.max(MIN_CHUNK_BYTES, Math.floor(chunkBytes / 2));
-        const sizeLabel = (chunkBytes / 1024 / 1024)
-          .toFixed(2)
-          .replace(/\.?0+$/, "");
-        console.log(
-          `[交付] 网关超时，分片缩小到 ${sizeLabel} MB，用新批次重传`,
-        );
-      }
-    }
+    await sendBatch();
 
     console.log(
       `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB，分片 ${(chunkBytes / 1024 / 1024).toFixed(2).replace(/\.?0+$/, "")} MB，耗时 ${((Date.now() - startedAt) / 1000).toFixed(0)}s）`,
