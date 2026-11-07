@@ -1,4 +1,4 @@
-name: Build and Deploy to GitHub Pages
+name: Daily crawl and private delivery
 
 on:
   schedule:
@@ -7,10 +7,10 @@ on:
   workflow_dispatch:
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
-  build-and-deploy:
+  crawl-and-deliver:
     runs-on: ubuntu-latest
 
     steps:
@@ -38,123 +38,12 @@ jobs:
       - name: Install dependencies
         run: npm install
 
-      - name: Run crawler
+      - name: Run crawler and deliver private package
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # 交付配置由私有仓读取，接口地址与 token 均不在仓库与日志中出现
+          GH_APP_ID: ${{ secrets.GH_APP_ID }}
+          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
+          GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+          CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
+          CONFIG_PATH: upload.json
         run: npm run dev
-
-      - name: Prepare dist folder
-        run: |
-          if [ ! -d "dist" ]; then
-            echo "dist folder not found, nothing to deploy."
-            exit 1
-          fi
-
-      - name: Deploy to gh-pages branch
-        uses: peaceiris/actions-gh-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_branch: gh-pages
-          publish_dir: ./dist
-          force_orphan: true
-
-      - name: "Set target date for release (same as crawler: today UTC + 13 days)"
-        run: echo "TARGET_DATE=$(date -u -d '+13 days' +%Y%m%d)" >> $GITHUB_ENV
-
-      - name: Read crawler summary
-        id: summary
-        run: |
-          if [ -f dist/summary.json ]; then
-            if jq -e '.fullRefresh == true' dist/summary.json >/dev/null; then
-              echo "RELEASE_MODE=全量抓取（上传全部 JSON）" >> $GITHUB_ENV
-            else
-              echo "RELEASE_MODE=增量抓取（仅上传新增和停运 JSON）" >> $GITHUB_ENV
-            fi
-            echo "LIST_REQ=$(jq -r '.trainList.requested // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "LIST_SUCCESS=$(jq -r '.trainList.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "LIST_FAILED=$(jq -r '.trainList.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_REQ=$(jq -r '.trainDetail.requested // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_SUCCESS=$(jq -r '.trainDetail.success // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_FAILED_HTTP=$(jq -r '.trainDetail.failed // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_COMPENSATED=$(jq -r '.trainDetail.compensated // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_REUSED=$(jq -r '.trainDetail.reusedFromPreviousRelease // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_PLANNED=$(jq -r '.trainDetail.plannedDistinctTrainNumbers // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_ROWS_API=$(jq -r '.trainDetail.distinctTrainsFilledByApi // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-            echo "DETAIL_ROWS_MISSING=$(jq -r '.trainDetail.distinctTrainsStillMissingAfterCompensation // "N/A"' dist/summary.json)" >> $GITHUB_ENV
-          else
-            for VAR in LIST_REQ LIST_SUCCESS LIST_FAILED DETAIL_REQ DETAIL_SUCCESS DETAIL_FAILED_HTTP DETAIL_COMPENSATED DETAIL_REUSED DETAIL_PLANNED DETAIL_ROWS_API DETAIL_ROWS_MISSING; do
-              echo "${VAR}=N/A" >> $GITHUB_ENV
-            done
-          fi
-
-      - name: Select JSON assets for Release
-        id: release-assets
-        run: |
-          if jq -e '.fullRefresh == true' dist/summary.json >/dev/null; then
-            if [ "$TARGET_DATE" -ge 20261125 ]; then
-              echo "Full refresh: uploading all active JSON assets (excluding retired L/numeric train classes)"
-              FILES=$(find dist -maxdepth 1 -type f -name '*.json' \
-                ! -name 'train_detail_L_*.json' \
-                ! -name 'train_detail_NUMERIC_*.json' \
-                -print | sort)
-            else
-              echo "Full refresh: uploading all JSON assets"
-              FILES=$(find dist -maxdepth 1 -type f -name '*.json' -print | sort)
-            fi
-          else
-            echo "Incremental refresh: uploading new/stopped JSON assets"
-            FILES=""
-            for FILE in \
-              dist/new.json \
-              dist/new_detail.json \
-              dist/stopped.json \
-              dist/stopped_detail.json \
-              dist/stop_temp.json \
-              dist/stop_temp_detail.json; do
-              if [ ! -f "$FILE" ]; then
-                echo "Required release asset missing: $FILE" >&2
-                exit 1
-              fi
-              FILES="${FILES}${FILE}"$'\n'
-            done
-          fi
-          {
-            echo "files<<EOF"
-            printf '%s\n' "$FILES"
-            echo "EOF"
-          } >> "$GITHUB_OUTPUT"
-
-      - name: Create GitHub Release and upload selected JSON assets
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: data-${{ env.TARGET_DATE }}
-          name: 车次数据 ${{ env.TARGET_DATE }}
-          body: |
-            车次列表与车次详情，对应日期 ${{ env.TARGET_DATE }}。发布模式：${{ env.RELEASE_MODE }}。
-            ### 车次列表（12306 search 接口）
-            | 指标 | 数值 |
-            | --- | --- |
-            | 请求次数（含重试） | ${{ env.LIST_REQ }} |
-            | 成功响应次数 | ${{ env.LIST_SUCCESS }} |
-            | 最终失败队列条目 | ${{ env.LIST_FAILED }} |
-            ### 车次详情（12306 queryTrainInfo 接口）
-            | 指标 | 数值 |
-            | --- | --- |
-            | 请求次数（含重试） | ${{ env.DETAIL_REQ }} |
-            | 成功响应次数 | ${{ env.DETAIL_SUCCESS }} |
-            | 最终失败队列条目 | ${{ env.DETAIL_FAILED_HTTP }} |
-            | 前日 HerbertHe Release JSON 补偿条数（按 train_no） | ${{ env.DETAIL_COMPENSATED }} |
-            | 复用上一 Release 详情条数 | ${{ env.DETAIL_REUSED }} |
-            ### 车次详情条目（按计划车号）
-            | 指标 | 数值 |
-            | --- | --- |
-            | 待获取车次（去重后） | ${{ env.DETAIL_PLANNED }} |
-            | 接口拉回条数 | ${{ env.DETAIL_ROWS_API }} |
-            | 补偿后仍缺条数 | ${{ env.DETAIL_ROWS_MISSING }} |
-            ### 文件说明
-            - 全量抓取时包含车次列表和详情全量 JSON（含按车次类型及数字车次分组文件）
-            - 增量抓取时包含 new.json、new_detail.json、stopped.json、stopped_detail.json、stop_temp.json、stop_temp_detail.json
-          files: ${{ steps.release-assets.outputs.files }}
-          skip_if_tag_exists: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
