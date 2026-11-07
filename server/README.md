@@ -23,10 +23,27 @@
 | --- | --- |
 | 认证 | `Authorization: Bearer <upload_token>` |
 | Content-Type | `multipart/form-data` |
-| 表单字段 | `snapshot_date`（`YYYYMMDD`）+ 重复的 `files` |
+| 批量标识 | `batch_id`（每次运行一个 UUID），`file_index`（1 起），`file_total` |
+| 每次请求 | 只带**一个** `files`（单文件），避免整包单请求超时 |
+| 收尾请求 | 同一 `batch_id`，带 `finalize=1`，不带文件；服务端此时校验并发布 |
 | 文件 | `train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json`（必含）、分组详情、`stopped.json`、`stopped_detail.json`、`summary.json` |
 | 成功响应 | 任意 `2xx`，响应体不使用 |
-| 失败 | `401` 鉴权失败、`400` 字段/文件不合法、`5xx` 服务端错误（爬虫会重试 3 次） |
+| 失败 | `401` 鉴权失败、`400` 字段/文件不合法、`5xx` 服务端错误（爬虫按文件重试 3 次） |
+
+兼容：不带 `batch_id` 时按旧协议处理，即一次请求提交整包并立即发布（对应配置 `upload_mode: "single"`）。
+
+### 一次完整上传的请求顺序
+
+```text
+POST snapshot_date=20261106 batch_id=<uuid> file_index=1 file_total=12 files=train_list_20261106.json
+POST ... file_index=2 ... files=train_detail_20261106.json
+...
+POST snapshot_date=20261106 batch_id=<uuid> file_total=12 finalize=1
+```
+
+- 单文件失败只重传该文件，前面的文件保留在暂存目录
+- 收尾前 `latest.json` 不变，任何中断都不会影响已有快照
+- 客户端中途放弃时，暂存目录需按 TTL 清理（建议 24 小时）
 
 ### GET /api/latest
 
@@ -62,14 +79,14 @@ data/
     stopped.json
     stopped_detail.json
     summary.json
-  .staging/                   # 上传暂存，整包成功后整体改名到 data/<date>/
+  .staging/<batch_id>/        # 逐文件上传的暂存目录，finalize 成功后整体改名到 data/<date>/
   .trash/                     # 被替换的旧目录，定期清空
 ```
 
 **发布顺序（保证"要么旧包、要么新包"）：**
 
-1. 上传文件全部落到 `.staging/<date>-<随机>/`
-2. 校验 `train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json` 存在
+1. 同一 `batch_id` 的文件逐个落到 `.staging/<batch_id>/`（单文件失败只影响这一个文件）
+2. 收到 `finalize=1` 后校验文件数、`train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json` 是否存在
 3. `data/<date>/` 已存在则先移到 `.trash/`，再把暂存目录整体改名为 `data/<date>/`
 4. 写入 `.latest.tmp` 后 `rename` 成 `latest.json`（原子替换）
 
@@ -112,55 +129,98 @@ const app = express();
 app.disable("x-powered-by");
 const receive = multer({ dest: STAGE, limits: { fileSize: 300 * 1024 * 1024, files: 64 } });
 
+// 校验暂存目录为完整快照后，原子切换到 data/<date>/ 并更新 latest.json
+const publishSnapshot = async (staging, date) => {
+  await fs.access(path.join(staging, `train_list_${date}.json`));
+  await fs.access(path.join(staging, `train_detail_${date}.json`));
+
+  // 同一日期重跑：旧目录先挪走，再整体切换
+  const target = path.join(ROOT, date);
+  try {
+    await fs.rename(target, path.join(TRASH, `${date}-${Date.now()}`));
+  } catch {}
+  await fs.rename(staging, target);
+
+  const fileUrl = (name) => `${PUBLIC_BASE}/data/${date}/${name}`;
+  const manifest = {
+    snapshot_date: date,
+    files: {
+      train_list: fileUrl(`train_list_${date}.json`),
+      train_detail: fileUrl(`train_detail_${date}.json`),
+    },
+  };
+  for (const [key, name] of [["stopped", "stopped.json"], ["stopped_detail", "stopped_detail.json"]]) {
+    try {
+      await fs.access(path.join(target, name));
+      manifest.files[key] = fileUrl(name);
+    } catch {}
+  }
+
+  const tmp = path.join(ROOT, ".latest.tmp");
+  await fs.writeFile(tmp, JSON.stringify(manifest));
+  await fs.rename(tmp, path.join(ROOT, "latest.json")); // 指针原子切换
+};
+
+const moveUploaded = async (staging, files) => {
+  await fs.mkdir(staging, { recursive: true });
+  for (const file of files) {
+    const name = path.basename(file.originalname);
+    if (!/^[A-Za-z0-9_.-]+\.json$/.test(name)) throw new Error("bad filename");
+    await fs.rename(file.path, path.join(staging, name));
+  }
+};
+const discardTemp = (files) => Promise.allSettled(files.map((f) => fs.unlink(f.path)));
+
 app.post("/api/upload", guard(UPLOAD_TOKEN), receive.array("files"), async (req, res) => {
   const date = String(req.body?.snapshot_date ?? "");
   const files = req.files ?? [];
   if (!/^\d{8}$/.test(date)) {
-    await Promise.allSettled(files.map((f) => fs.unlink(f.path)));
+    await discardTemp(files);
     return res.status(400).json({ error: "bad snapshot_date" });
   }
 
-  const staging = path.join(STAGE, `${date}-${crypto.randomUUID()}`);
-  await fs.mkdir(staging, { recursive: true });
-  try {
-    for (const file of files) {
-      const name = path.basename(file.originalname);
-      if (!/^[A-Za-z0-9_.-]+\.json$/.test(name)) throw new Error("bad filename");
-      await fs.rename(file.path, path.join(staging, name));
-    }
-    await fs.access(path.join(staging, `train_list_${date}.json`));
-    await fs.access(path.join(staging, `train_detail_${date}.json`));
+  const batchId = String(req.body?.batch_id ?? "").trim();
 
-    // 同一日期重跑：旧目录先挪走，再整体切换
-    const target = path.join(ROOT, date);
+  // 兼容旧协议：没有 batch_id 就整包一次提交，立即发布
+  if (!batchId) {
+    const staging = path.join(STAGE, `${date}-${crypto.randomUUID()}`);
     try {
-      await fs.rename(target, path.join(TRASH, `${date}-${Date.now()}`));
-    } catch {}
-    await fs.rename(staging, target);
-
-    const fileUrl = (name) => `${PUBLIC_BASE}/data/${date}/${name}`;
-    const manifest = {
-      snapshot_date: date,
-      files: {
-        train_list: fileUrl(`train_list_${date}.json`),
-        train_detail: fileUrl(`train_detail_${date}.json`),
-      },
-    };
-    for (const [key, name] of [["stopped", "stopped.json"], ["stopped_detail", "stopped_detail.json"]]) {
-      try {
-        await fs.access(path.join(target, name));
-        manifest.files[key] = fileUrl(name);
-      } catch {}
+      await moveUploaded(staging, files);
+      await publishSnapshot(staging, date);
+      console.log(`[upload] ${date} 已发布（整包，${files.length} 个文件）`); // 不打印地址与 token
+      return res.json({ ok: true, snapshot_date: date, received: files.length });
+    } catch (error) {
+      await discardTemp(files);
+      await fs.rm(staging, { recursive: true, force: true });
+      console.error("[upload]", error.message);
+      return res.status(400).json({ error: "invalid package" });
     }
-    const tmp = path.join(ROOT, ".latest.tmp");
-    await fs.writeFile(tmp, JSON.stringify(manifest));
-    await fs.rename(tmp, path.join(ROOT, "latest.json")); // 指针原子切换
+  }
 
-    console.log(`[upload] ${date} 已发布，${files.length} 个文件`); // 不打印地址与 token
-    res.json({ ok: true, snapshot_date: date, received: files.length });
+  if (!/^[0-9a-f-]{36}$/i.test(batchId)) {
+    await discardTemp(files);
+    return res.status(400).json({ error: "bad batch_id" });
+  }
+
+  // 逐文件上传：先落 .staging/<batch_id>/，finalize=1 时才校验并发布
+  const staging = path.join(STAGE, batchId);
+  try {
+    await moveUploaded(staging, files);
+    if (String(req.body?.finalize ?? "") !== "1") {
+      return res.json({ ok: true, snapshot_date: date, received: files.length });
+    }
+
+    const expected = Number(req.body?.file_total ?? 0);
+    const staged = await fs.readdir(staging);
+    if (expected > 0 && staged.length < expected) {
+      return res.status(400).json({ error: `incomplete batch: ${staged.length}/${expected}` });
+    }
+    await publishSnapshot(staging, date);
+    console.log(`[upload] ${date} 已发布（batch ${batchId}，${staged.length} 个文件）`);
+    res.json({ ok: true, snapshot_date: date, received: staged.length });
   } catch (error) {
-    await fs.rm(staging, { recursive: true, force: true });
-    console.error("[upload]", error.message);
+    await discardTemp(files);
+    console.error("[upload]", error.message); // 暂存目录保留，便于客户端重试或由 TTL 清理
     res.status(400).json({ error: "invalid package" });
   }
 });
@@ -226,9 +286,12 @@ location / {
   "upload_url": "https://data.example.com/api/upload",
   "upload_token": "<UPLOAD_TOKEN>",
   "latest_url": "https://data.example.com/api/latest",
-  "latest_token": "<LATEST_TOKEN>"
+  "latest_token": "<LATEST_TOKEN>",
+  "upload_mode": "per_file"
 }
 ```
+
+`upload_mode` 默认 `per_file`（逐文件 + finalize）；服务端还是旧版整包接口时改成 `"single"`。
 
 GitHub App：
 
@@ -243,12 +306,29 @@ GitHub App：
 # 还没有快照时应返回 404
 curl -i -H "Authorization: Bearer $LATEST_TOKEN" https://data.example.com/api/latest
 
-# 手工推一份最小包（从 dist 取真实文件）
+# 手工推一份最小包（旧整包协议，无 batch_id 时立即发布）
 curl -X POST https://data.example.com/api/upload \
   -H "Authorization: Bearer $UPLOAD_TOKEN" \
   -F snapshot_date=20261106 \
   -F files=@dist/train_list_20261106.json \
   -F files=@dist/train_detail_20261106.json
+
+# 逐文件协议：同一 batch_id 传完所有文件，再发 finalize
+BATCH=$(uuidgen | tr 'A-Z' 'a-z')
+curl -X POST https://data.example.com/api/upload \
+  -H "Authorization: Bearer $UPLOAD_TOKEN" \
+  -F snapshot_date=20261106 -F batch_id=$BATCH \
+  -F file_index=1 -F file_total=2 \
+  -F files=@dist/train_list_20261106.json
+curl -X POST https://data.example.com/api/upload \
+  -H "Authorization: Bearer $UPLOAD_TOKEN" \
+  -F snapshot_date=20261106 -F batch_id=$BATCH \
+  -F file_index=2 -F file_total=2 \
+  -F files=@dist/train_detail_20261106.json
+curl -X POST https://data.example.com/api/upload \
+  -H "Authorization: Bearer $UPLOAD_TOKEN" \
+  -F snapshot_date=20261106 -F batch_id=$BATCH \
+  -F file_total=2 -F finalize=1
 
 # 再查 latest，应指向刚上传的日期，且文件地址可直接带 token 下载
 curl -H "Authorization: Bearer $LATEST_TOKEN" https://data.example.com/api/latest

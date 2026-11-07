@@ -1,5 +1,6 @@
 import fs from "fs";
 import path from "path";
+import { randomUUID } from "crypto";
 
 /**
  * 交付服务端回读的上一份全量包（原始 JSON，由调用方做业务校验）
@@ -17,6 +18,8 @@ type DeliveryConfig = {
   uploadToken: string;
   latestUrl?: string;
   latestToken?: string;
+  /** per_file（默认，逐个文件上传后 finalize）或 single（整包单请求，兼容旧服务端） */
+  uploadMode: "per_file" | "single";
 };
 
 const CONFIG_REPO = (process.env.CONFIG_REPO ?? "").trim();
@@ -118,6 +121,7 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     upload_token?: unknown;
     latest_url?: unknown;
     latest_token?: unknown;
+    upload_mode?: unknown;
   };
   if (
     typeof config?.upload_url !== "string" ||
@@ -135,14 +139,18 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     typeof config.latest_token === "string" && config.latest_token
       ? config.latest_token
       : undefined;
+  // 默认逐文件上传；旧服务端只支持整包单请求时配置 upload_mode: "single"
+  const uploadMode: "per_file" | "single" =
+    config.upload_mode === "single" ? "single" : "per_file";
   console.log(
-    `[交付] 已读取私有仓配置 ${CONFIG_REPO}/${usedPath}：upload_url 已配置，latest_url ${latestUrl ? "已配置" : "未配置"}`,
+    `[交付] 已读取私有仓配置 ${CONFIG_REPO}/${usedPath}：upload_mode=${uploadMode}，latest_url ${latestUrl ? "已配置" : "未配置"}`,
   );
   return {
     uploadUrl: config.upload_url,
     uploadToken: config.upload_token,
     latestUrl,
     latestToken,
+    uploadMode,
   };
 };
 
@@ -312,9 +320,65 @@ const selectFullPackageFiles = (distDir: string): string[] =>
 const wait = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
 
+/** 单个文件 15 分钟、整包单请求 10 分钟、finalize 2 分钟 */
+const PER_FILE_TIMEOUT_MS = 900_000;
+const SINGLE_TIMEOUT_MS = 600_000;
+const FINALIZE_TIMEOUT_MS = 120_000;
+
+const postForm = async (
+  config: DeliveryConfig,
+  form: FormData,
+  snapshotDate: string,
+  timeoutMs: number,
+): Promise<void> => {
+  const rsp = await fetch(config.uploadUrl, {
+    method: "POST",
+    headers: {
+      Authorization: `Bearer ${config.uploadToken}`,
+      "User-Agent": USER_AGENT,
+      "X-Snapshot-Date": snapshotDate,
+    },
+    body: form,
+    signal: AbortSignal.timeout(timeoutMs),
+  });
+  if (!rsp.ok) {
+    const detail = await rsp.text().catch(() => "");
+    throw new Error(
+      `HTTP ${rsp.status}${detail ? ` ${detail.slice(0, 200)}` : ""}`,
+    );
+  }
+};
+
+const withRetry = async (
+  label: string,
+  action: () => Promise<void>,
+): Promise<void> => {
+  for (let attempt = 1; ; attempt++) {
+    try {
+      await action();
+      return;
+    } catch (error) {
+      const message = error instanceof Error ? error.message : String(error);
+      if (attempt >= UPLOAD_MAX_ATTEMPTS) {
+        throw new Error(
+          `[交付] ${label} 失败（已尝试 ${UPLOAD_MAX_ATTEMPTS} 次）：${message}`,
+        );
+      }
+      const delay = 2 ** attempt * 1000;
+      console.log(
+        `[交付] ${label} 第 ${attempt} 次失败：${message}，${delay / 1000}s 后重试`,
+      );
+      await wait(delay);
+    }
+  }
+};
+
 /**
- * 把本次全量 JSON 以 multipart/form-data POST 到交付服务端。
- * 表单字段：snapshot_date、files（同名重复，filename 为文件名）。
+ * 把本次全量 JSON 以 multipart/form-data 上传到交付服务端。
+ *
+ * per_file：一个请求只带一个文件（snapshot_date / batch_id / file_index / file_total），
+ * 全部传完后单独发 finalize=1，由服务端校验并原子发布。避免整包单请求超时。
+ * single：兼容旧服务端，整包一次 POST。
  */
 export const uploadFullPackage = async (
   distDir: string,
@@ -334,10 +398,47 @@ export const uploadFullPackage = async (
     0,
   );
   console.log(
-    `[交付] 准备上传 ${files.length} 个全量 JSON（${(totalBytes / 1024 / 1024).toFixed(2)} MB）`,
+    `[交付] 准备上传 ${files.length} 个全量 JSON（${(totalBytes / 1024 / 1024).toFixed(2)} MB，upload_mode=${config.uploadMode}）`,
   );
 
-  for (let attempt = 1; attempt <= UPLOAD_MAX_ATTEMPTS; attempt++) {
+  if (config.uploadMode === "per_file") {
+    const batchId = randomUUID();
+    const startedAt = Date.now();
+    for (const [index, name] of files.entries()) {
+      const content = fs.readFileSync(path.join(distDir, name));
+      const blob = new Blob([new Uint8Array(content)], {
+        type: "application/json",
+      });
+      console.log(
+        `[交付] 上传 ${index + 1}/${files.length} ${name}（${(content.byteLength / 1024 / 1024).toFixed(2)} MB）`,
+      );
+      await withRetry(`上传 ${name}`, async () => {
+        const form = new FormData();
+        form.append("snapshot_date", snapshotDate);
+        form.append("batch_id", batchId);
+        form.append("file_index", String(index + 1));
+        form.append("file_total", String(files.length));
+        form.append("files", blob, name);
+        await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+      });
+    }
+
+    await withRetry("提交全量包", async () => {
+      const form = new FormData();
+      form.append("snapshot_date", snapshotDate);
+      form.append("batch_id", batchId);
+      form.append("file_total", String(files.length));
+      form.append("finalize", "1");
+      await postForm(config, form, snapshotDate, FINALIZE_TIMEOUT_MS);
+    });
+
+    console.log(
+      `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB，耗时 ${((Date.now() - startedAt) / 1000).toFixed(0)}s）`,
+    );
+    return;
+  }
+
+  await withRetry("整包上传", async () => {
     // 每次重试重建表单，避免上一次超时后 body 已被消费
     const form = new FormData();
     form.append("snapshot_date", snapshotDate);
@@ -349,36 +450,10 @@ export const uploadFullPackage = async (
         name,
       );
     }
-    try {
-      const rsp = await fetch(config.uploadUrl, {
-        method: "POST",
-        headers: {
-          Authorization: `Bearer ${config.uploadToken}`,
-          "User-Agent": USER_AGENT,
-          "X-Snapshot-Date": snapshotDate,
-        },
-        body: form,
-        signal: AbortSignal.timeout(600_000),
-      });
-      if (!rsp.ok) {
-        throw new Error(`HTTP ${rsp.status}`);
-      }
-      console.log(
-        `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB）`,
-      );
-      return;
-    } catch (error) {
-      const message = error instanceof Error ? error.message : String(error);
-      if (attempt === UPLOAD_MAX_ATTEMPTS) {
-        throw new Error(
-          `[交付] 全量包上传失败（已尝试 ${UPLOAD_MAX_ATTEMPTS} 次）：${message}`,
-        );
-      }
-      const delay = 2 ** attempt * 1000;
-      console.log(
-        `[交付] 第 ${attempt} 次上传失败：${message}，${delay / 1000}s 后重试`,
-      );
-      await wait(delay);
-    }
-  }
+    await postForm(config, form, snapshotDate, SINGLE_TIMEOUT_MS);
+  });
+
+  console.log(
+    `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB）`,
+  );
 };
