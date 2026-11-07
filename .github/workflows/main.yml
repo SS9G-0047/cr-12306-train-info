@@ -45,6 +45,7 @@ jobs:
           CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
         run: |
           set +x
+          CONFIG_REPO=$(printf '%s' "$CONFIG_REPO" | tr -d '[:space:]')
           if [ -z "$CONFIG_REPO" ]; then
             echo "::error::缺少 Secrets.CONFIG_REPO（格式 owner/repo）"
             exit 1
@@ -61,6 +62,23 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           owner: ${{ steps.config-repo.outputs.owner }}
           repositories: ${{ steps.config-repo.outputs.repo }}
+
+      # 抓取前先确认配置文件可读，避免跑完一小时才发现 404
+      - name: Verify private config file
+        env:
+          GH_TOKEN: ${{ steps.app-token.outputs.token }}
+          CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
+        run: |
+          set +x
+          REPO=$(printf '%s' "$CONFIG_REPO" | tr -d '[:space:]')
+          for CONFIG_FILE_PATH in config/upload.json upload.json; do
+            if gh api "repos/$REPO/contents/$CONFIG_FILE_PATH" --jq '.name' >/dev/null 2>&1; then
+              echo "配置可读：$REPO/$CONFIG_FILE_PATH"
+              exit 0
+            fi
+          done
+          echo "::error::$REPO 下找不到 config/upload.json 或 upload.json（HTTP 404）。请检查 CONFIG_REPO、文件路径，并确认 App 已安装到该仓且有 Contents: read"
+          exit 1
 
       - name: Run crawler and deliver private package
         env:

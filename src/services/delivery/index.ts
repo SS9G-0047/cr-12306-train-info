@@ -19,8 +19,14 @@ type DeliveryConfig = {
   latestToken?: string;
 };
 
-const CONFIG_REPO = process.env.CONFIG_REPO ?? "";
-const CONFIG_PATH = process.env.CONFIG_PATH ?? "config/upload.json";
+const CONFIG_REPO = (process.env.CONFIG_REPO ?? "").trim();
+// 允许 CONFIG_PATH 写成 ./config/upload.json 或带反斜杠
+const CONFIG_PATH =
+  (process.env.CONFIG_PATH ?? "config/upload.json")
+    .replace(/\\/g, "/")
+    .replace(/^\.\//, "")
+    .replace(/^\/+/, "")
+    .replace(/\/+$/, "") || "config/upload.json";
 const GITHUB_API = process.env.GITHUB_API_URL ?? "https://api.github.com";
 // 由 actions/create-github-app-token 以 App 身份换取；代码不再自行签发 JWT
 const APP_TOKEN = process.env.GITHUB_APP_TOKEN ?? "";
@@ -58,21 +64,48 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
       "[交付] 缺少 GITHUB_APP_TOKEN 或 CONFIG_REPO，无法读取私有仓配置（token 应由 actions/create-github-app-token 提供）",
     );
   }
-  const encodedPath = CONFIG_PATH.split("/")
-    .filter(Boolean)
-    .map(encodeURIComponent)
-    .join("/");
-  const rsp = await fetch(
-    `${GITHUB_API}/repos/${CONFIG_REPO}/contents/${encodedPath}`,
-    {
-      headers: ghHeaders(APP_TOKEN, "application/vnd.github.raw+json"),
-      signal: AbortSignal.timeout(30_000),
-    },
-  );
-  if (!rsp.ok) {
-    throw new Error(`[交付] 读取私有仓配置失败 HTTP ${rsp.status}`);
+  const readRepoFile = async (filePath: string): Promise<string | null> => {
+    const encodedPath = filePath
+      .split("/")
+      .filter(Boolean)
+      .map(encodeURIComponent)
+      .join("/");
+    const rsp = await fetch(
+      `${GITHUB_API}/repos/${CONFIG_REPO}/contents/${encodedPath}`,
+      {
+        headers: ghHeaders(APP_TOKEN, "application/vnd.github.raw+json"),
+        signal: AbortSignal.timeout(30_000),
+      },
+    );
+    if (rsp.status === 404) return null;
+    if (!rsp.ok) {
+      throw new Error(
+        `[交付] 读取私有仓配置失败 HTTP ${rsp.status}（${CONFIG_REPO}/${filePath}）`,
+      );
+    }
+    return rsp.text();
+  };
+
+  // 配置约定在 config/upload.json；兼容旧布局，找不到时再试仓库根目录的 upload.json
+  const candidates =
+    CONFIG_PATH === "upload.json" ? [CONFIG_PATH] : [CONFIG_PATH, "upload.json"];
+  let text: string | null = null;
+  let usedPath = CONFIG_PATH;
+  for (const candidate of candidates) {
+    text = await readRepoFile(candidate);
+    if (text !== null) {
+      usedPath = candidate;
+      break;
+    }
   }
-  const text = await rsp.text();
+  if (text === null) {
+    throw new Error(
+      `[交付] 私有仓 ${CONFIG_REPO} 中找不到配置 ${CONFIG_PATH}（HTTP 404）：请确认 CONFIG_REPO、CONFIG_PATH，以及 App 已安装到该仓并获得 Contents: read`,
+    );
+  }
+  if (usedPath !== CONFIG_PATH) {
+    console.log(`[交付] ${CONFIG_PATH} 不存在，已回退到 ${usedPath}`);
+  }
 
   let parsed: unknown;
   try {
@@ -103,7 +136,7 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
       ? config.latest_token
       : undefined;
   console.log(
-    `[交付] 已读取私有仓配置：upload_url 已配置，latest_url ${latestUrl ? "已配置" : "未配置"}`,
+    `[交付] 已读取私有仓配置 ${CONFIG_REPO}/${usedPath}：upload_url 已配置，latest_url ${latestUrl ? "已配置" : "未配置"}`,
   );
   return {
     uploadUrl: config.upload_url,
