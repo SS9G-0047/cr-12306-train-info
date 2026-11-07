@@ -7,7 +7,7 @@
 
 爬虫每天跑完后：
 
-1. 用 GitHub App 临时 token 读取私有仓 `upload.json`，拿到 `upload_url` / `upload_token`
+1. 用 GitHub App 临时 token 读取私有仓 `config/upload.json`，拿到 `upload_url` / `upload_token`
 2. 把本次**全量 JSON** POST 到服务端
 3. 服务端落盘并原子更新 `latest.json` 指针
 
@@ -219,7 +219,7 @@ location / {
 
 ## 6. 私有仓 `upload.json` 与 GitHub App
 
-`upload.json`（放在私有仓，路径由 `CONFIG_PATH` 指定）：
+`config/upload.json`（放在私有仓，路径由 `CONFIG_PATH` 指定，默认 `config/upload.json`）：
 
 ```json
 {
@@ -232,10 +232,10 @@ location / {
 
 GitHub App：
 
-1. 创建 App，权限只给 **Contents: Read-only**，安装到存放 `upload.json` 的私有仓
-2. 生成私钥，写入仓库 Secret `GH_APP_PRIVATE_KEY`
-3. 另配 Secret：`GH_APP_ID`、`GH_APP_INSTALLATION_ID`（可省略，省略时取第一个安装）、`CONFIG_REPO`（`owner/repo`）
-4. 爬虫只在运行时换取 1 小时 installation token，token 不落盘、不进日志
+1. 创建 App，权限只给 **Contents: Read-only**，安装到存放 `config/upload.json` 的私有仓
+2. 在爬虫仓库配置：Variable `APP_CLIENT_ID`（App 的 Client ID）、Secret `APP_PRIVATE_KEY`（App 私钥）、Secret `CONFIG_REPO`（`owner/repo`）
+3. Workflow 用 `actions/create-github-app-token@v3` 换取 1 小时 installation token（`client-id` 取 `vars.APP_CLIENT_ID`），再以 `GITHUB_APP_TOKEN` 传给爬虫
+4. token 由 Action 自动掩码，代码只读环境变量，不打印、不落盘
 
 ## 7. 验收
 

@@ -28,6 +28,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
+          set +x
           if ! gh release download proxies-latest --repo "$GITHUB_REPOSITORY" --pattern "proxies.txt" --dir . 2>/dev/null; then
             echo "Own proxies-latest not found; trying upstream..."
             if ! gh release download proxies-latest --repo HerbertHe/cr-12306-train-info --pattern "proxies.txt" --dir . 2>/dev/null; then
@@ -38,14 +39,37 @@ jobs:
       - name: Install dependencies
         run: npm install
 
+      - name: Resolve config repository
+        id: config-repo
+        env:
+          CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
+        run: |
+          set +x
+          if [ -z "$CONFIG_REPO" ]; then
+            echo "::error::缺少 Secrets.CONFIG_REPO（格式 owner/repo）"
+            exit 1
+          fi
+          echo "owner=${CONFIG_REPO%%/*}" >> "$GITHUB_OUTPUT"
+          echo "repo=${CONFIG_REPO##*/}" >> "$GITHUB_OUTPUT"
+
+      # 用 GitHub App 原生方案换票：client-id 用 Variables.APP_CLIENT_ID，私钥用 Secrets.APP_PRIVATE_KEY
+      - name: Create GitHub App token
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ steps.config-repo.outputs.owner }}
+          repositories: ${{ steps.config-repo.outputs.repo }}
+
       - name: Run crawler and deliver private package
         env:
           # 历史 Release 仅作为增量基线回退读取，不再发布
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          # 交付配置由私有仓读取，接口地址与 token 均不在仓库与日志中出现
-          GH_APP_ID: ${{ secrets.GH_APP_ID }}
-          GH_APP_PRIVATE_KEY: ${{ secrets.GH_APP_PRIVATE_KEY }}
-          GH_APP_INSTALLATION_ID: ${{ secrets.GH_APP_INSTALLATION_ID }}
+          # 用 Action 换到的 installation token 读取私有仓配置，地址与 token 不进日志
+          GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
           CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
-          CONFIG_PATH: upload.json
-        run: npm run dev
+          CONFIG_PATH: config/upload.json
+        run: |
+          set +x
+          npm run dev

@@ -1,4 +1,3 @@
-import crypto from "crypto";
 import fs from "fs";
 import path from "path";
 
@@ -21,12 +20,10 @@ type DeliveryConfig = {
 };
 
 const CONFIG_REPO = process.env.CONFIG_REPO ?? "";
-const CONFIG_PATH = process.env.CONFIG_PATH ?? "upload.json";
+const CONFIG_PATH = process.env.CONFIG_PATH ?? "config/upload.json";
 const GITHUB_API = process.env.GITHUB_API_URL ?? "https://api.github.com";
-const APP_ID = process.env.GH_APP_ID ?? "";
-// 兼容 secret 中以字面量 \n 存放的 PEM
-const APP_PRIVATE_KEY = (process.env.GH_APP_PRIVATE_KEY ?? "").replace(/\\n/g, "\n");
-const INSTALLATION_ID = process.env.GH_APP_INSTALLATION_ID ?? "";
+// 由 actions/create-github-app-token 以 App 身份换取；代码不再自行签发 JWT
+const APP_TOKEN = process.env.GITHUB_APP_TOKEN ?? "";
 const USER_AGENT = "cr-12306-train-info-delivery";
 const UPLOAD_MAX_ATTEMPTS = 3;
 
@@ -41,9 +38,6 @@ const PROCESS_ONLY_JSON = new Set([
 let cachedConfig: DeliveryConfig | null = null;
 let pendingConfig: Promise<DeliveryConfig> | null = null;
 
-const base64url = (input: Buffer | string): string =>
-  Buffer.from(input).toString("base64url");
-
 const ghHeaders = (
   bearer: string,
   accept = "application/vnd.github+json",
@@ -54,82 +48,16 @@ const ghHeaders = (
   "X-GitHub-Api-Version": "2022-11-28",
 });
 
-/** 在 Actions 中把运行时凭据登记为掩码，避免出现在日志里 */
-const maskIfActions = (value: string): void => {
-  if (process.env.GITHUB_ACTIONS === "true") {
-    console.log(`::add-mask::${value}`);
-  }
-};
-
 export const hasDeliveryCredentials = (): boolean =>
-  Boolean(APP_ID && APP_PRIVATE_KEY && CONFIG_REPO);
-
-/** 用 GitHub App 私钥签 RS256 JWT（Node 内置 crypto，无额外依赖） */
-const createAppJwt = (): string => {
-  const now = Math.floor(Date.now() / 1000);
-  const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-  const payload = base64url(
-    JSON.stringify({ iat: now - 60, exp: now + 540, iss: APP_ID }),
-  );
-  const data = `${header}.${payload}`;
-  const signature = base64url(
-    crypto.sign("sha256", Buffer.from(data), APP_PRIVATE_KEY),
-  );
-  return `${data}.${signature}`;
-};
-
-/** GitHub App JWT 换取 1 小时有效的 installation token */
-const createInstallationToken = async (): Promise<string> => {
-  const jwt = createAppJwt();
-  let installationId = INSTALLATION_ID;
-
-  if (!installationId) {
-    const rsp = await fetch(`${GITHUB_API}/app/installations?per_page=100`, {
-      headers: ghHeaders(jwt),
-      signal: AbortSignal.timeout(30_000),
-    });
-    if (!rsp.ok) {
-      throw new Error(`[交付] 查询 GitHub App 安装失败 HTTP ${rsp.status}`);
-    }
-    const list: unknown = await rsp.json();
-    if (!Array.isArray(list) || list.length === 0) {
-      throw new Error("[交付] GitHub App 没有任何安装实例");
-    }
-    const first = list[0] as { id?: unknown };
-    if (typeof first?.id !== "number") {
-      throw new Error("[交付] GitHub App 安装实例缺少 id");
-    }
-    installationId = String(first.id);
-    if (list.length > 1) {
-      console.log(
-        `[交付] GitHub App 有 ${list.length} 个安装实例，使用第一个；建议配置 GH_APP_INSTALLATION_ID`,
-      );
-    }
-  }
-
-  const rsp = await fetch(
-    `${GITHUB_API}/app/installations/${installationId}/access_tokens`,
-    { method: "POST", headers: ghHeaders(jwt), signal: AbortSignal.timeout(30_000) },
-  );
-  if (!rsp.ok) {
-    throw new Error(`[交付] 申请 installation token 失败 HTTP ${rsp.status}`);
-  }
-  const body = (await rsp.json()) as { token?: unknown };
-  if (typeof body.token !== "string" || !body.token) {
-    throw new Error("[交付] installation token 响应格式无效");
-  }
-  maskIfActions(body.token);
-  return body.token;
-};
+  Boolean(APP_TOKEN && CONFIG_REPO);
 
 /** 读取私有仓中的 upload.json（只在内存中使用，不落盘、不打印内容） */
 const loadConfig = async (): Promise<DeliveryConfig> => {
   if (!hasDeliveryCredentials()) {
     throw new Error(
-      "[交付] 缺少 GH_APP_ID / GH_APP_PRIVATE_KEY / CONFIG_REPO，无法读取私有仓配置",
+      "[交付] 缺少 GITHUB_APP_TOKEN 或 CONFIG_REPO，无法读取私有仓配置（token 应由 actions/create-github-app-token 提供）",
     );
   }
-  const token = await createInstallationToken();
   const encodedPath = CONFIG_PATH.split("/")
     .filter(Boolean)
     .map(encodeURIComponent)
@@ -137,7 +65,7 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
   const rsp = await fetch(
     `${GITHUB_API}/repos/${CONFIG_REPO}/contents/${encodedPath}`,
     {
-      headers: ghHeaders(token, "application/vnd.github.raw+json"),
+      headers: ghHeaders(APP_TOKEN, "application/vnd.github.raw+json"),
       signal: AbortSignal.timeout(30_000),
     },
   );

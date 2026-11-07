@@ -142,6 +142,7 @@ __test__
 
 # 私有交付：配置、代理列表与服务端运行数据
 upload.json
+config/upload.json
 proxies.txt
 server/data/
 server/.env
