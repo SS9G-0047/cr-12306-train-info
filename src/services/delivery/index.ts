@@ -1,6 +1,10 @@
 import fs from "fs";
 import path from "path";
 import { randomUUID } from "crypto";
+import { gzip } from "zlib";
+import { promisify } from "util";
+
+const gzipAsync = promisify(gzip);
 
 /**
  * 交付服务端回读的上一份全量包（原始 JSON，由调用方做业务校验）
@@ -36,7 +40,8 @@ const GITHUB_API = process.env.GITHUB_API_URL ?? "https://api.github.com";
 // 由 actions/create-github-app-token 以 App 身份换取；代码不再自行签发 JWT
 const APP_TOKEN = process.env.GITHUB_APP_TOKEN ?? "";
 const USER_AGENT = "cr-12306-train-info-delivery";
-const UPLOAD_MAX_ATTEMPTS = 3;
+/** 上传重试次数：502/503 多为网关或源站瞬时抖动，次数放宽到 6 次 */
+const UPLOAD_MAX_ATTEMPTS = 6;
 
 let cachedConfig: DeliveryConfig | null = null;
 let pendingConfig: Promise<DeliveryConfig> | null = null;
@@ -366,6 +371,12 @@ const isGatewayTimeout = (error: unknown): boolean => {
   return /\b524\b/.test(message) || /timed out|timeout|aborted/i.test(message);
 };
 
+/** 网关/源站不健康：524 超时，或 502/503/504 网关错误 */
+const isGatewayError = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+  return isGatewayTimeout(error) || /\b(502|503|504)\b/.test(message);
+};
+
 const markSlowGateway = <T>(error: T): T => {
   if (error && typeof error === "object") {
     (error as Record<string, unknown>)[SLOW_GATEWAY] = true;
@@ -388,6 +399,19 @@ const uploadRequest = async (
   }
 };
 
+/** 上传文件/分片：重试耗尽后仍为网关错误时，标记为链路问题，交给外层缩片重传 */
+const uploadWithAdaptive = async (
+  label: string,
+  action: () => Promise<void>,
+): Promise<void> => {
+  try {
+    await withRetry(label, action);
+  } catch (error) {
+    if (isGatewayError(error)) throw markSlowGateway(error);
+    throw error;
+  }
+};
+
 const withRetry = async (
   label: string,
   action: () => Promise<void>,
@@ -404,7 +428,7 @@ const withRetry = async (
           `[交付] ${label} 失败（已尝试 ${UPLOAD_MAX_ATTEMPTS} 次）：${message}`,
         );
       }
-      const delay = 2 ** attempt * 1000;
+      const delay = Math.min(20, 2 ** attempt) * 1000;
       console.log(
         `[交付] ${label} 第 ${attempt} 次失败：${message}，${delay / 1000}s 后重试`,
       );
@@ -454,15 +478,19 @@ export const uploadFullPackage = async (
       index: number,
       name: string,
     ): Promise<void> => {
-      const content = fs.readFileSync(path.join(distDir, name));
+      const raw = fs.readFileSync(path.join(distDir, name));
+      const rawMegabytes = (raw.byteLength / 1024 / 1024).toFixed(2);
+      // JSON 压缩率很高（39 MB 通常只剩 4 MB 左右），先 gzip 再切片
+      const content = await gzipAsync(raw);
       const megabytes = (content.byteLength / 1024 / 1024).toFixed(2);
+      const wireName = `${name}.gz`;
       const chunkTotal = Math.ceil(content.byteLength / chunkBytes);
 
       if (chunkTotal <= 1) {
         console.log(
-          `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB）`,
+          `[交付] 上传 ${index + 1}/${files.length} ${name}（${rawMegabytes} MB → gzip ${megabytes} MB）`,
         );
-        await withRetry(`上传 ${name}`, async () => {
+        await uploadWithAdaptive(`上传 ${name}`, async () => {
           const form = new FormData();
           form.append("snapshot_date", snapshotDate);
           form.append("batch_id", batchId);
@@ -470,8 +498,8 @@ export const uploadFullPackage = async (
           form.append("file_total", String(files.length));
           form.append(
             "files",
-            new Blob([new Uint8Array(content)], { type: "application/json" }),
-            name,
+            new Blob([new Uint8Array(content)], { type: "application/gzip" }),
+            wireName,
           );
           await uploadRequest(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
         });
@@ -481,7 +509,7 @@ export const uploadFullPackage = async (
       // 大文件按 chunkBytes 切片，单片独立请求，避免代理 100s 超时（如 Cloudflare 524）
       const sizeLabel = (chunkBytes / 1024 / 1024).toFixed(2).replace(/\.?0+$/, "");
       console.log(
-        `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB，分 ${chunkTotal} 片，每片 ${sizeLabel} MB）`,
+        `[交付] 上传 ${index + 1}/${files.length} ${name}（${rawMegabytes} MB → gzip ${megabytes} MB，分 ${chunkTotal} 片，每片 ${sizeLabel} MB）`,
       );
       for (let part = 1; part <= chunkTotal; part++) {
         const start = (part - 1) * chunkBytes;
@@ -492,16 +520,21 @@ export const uploadFullPackage = async (
         const blob = new Blob([new Uint8Array(slice)], {
           type: "application/octet-stream",
         });
-        await withRetry(`上传 ${name} 分片 ${part}/${chunkTotal}`, async () => {
-          const form = new FormData();
-          form.append("snapshot_date", snapshotDate);
-          form.append("batch_id", batchId);
-          form.append("chunk_of", name);
-          form.append("chunk_index", String(part));
-          form.append("chunk_total", String(chunkTotal));
-          form.append("chunk", blob, `${name}.p${part}`);
-          await uploadRequest(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
-        });
+        await uploadWithAdaptive(
+          `上传 ${name} 分片 ${part}/${chunkTotal}`,
+          async () => {
+            const form = new FormData();
+            form.append("snapshot_date", snapshotDate);
+            form.append("batch_id", batchId);
+            form.append("chunk_of", wireName);
+            form.append("chunk_index", String(part));
+            form.append("chunk_total", String(chunkTotal));
+            form.append("chunk", blob, `${wireName}.p${part}`);
+            await uploadRequest(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+          },
+        );
+        // 持续连传容易触发网关限流/连接重置，片间留一点间隔
+        if (part < chunkTotal) await wait(200);
       }
     };
 

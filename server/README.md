@@ -36,10 +36,12 @@
 ### 一次完整上传的请求顺序
 
 ```text
-POST snapshot_date=20261106 batch_id=<uuid> file_index=1 file_total=2 files=train_list_20261106.json
-POST ... file_index=2 ... files=train_detail_20261106.json   （大文件则走分片，见下）
+POST snapshot_date=20261106 batch_id=<uuid> file_index=1 file_total=2 files=train_list_20261106.json.gz
+POST ... file_index=2 ... files=train_detail_20261106.json.gz   （大文件则走分片，见下）
 POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 ```
+
+客户端会先 gzip 再传（39 MB 详情通常压到 4 MB 左右）。服务端把 `<name>.json.gz` 原样落盘，`finalize` 解压成 `<name>.json` 后再校验；旧客户端送 `.json` 也照常接受。
 
 - 单文件失败只重传该文件，前面的文件保留在暂存目录
 - 收尾前 `latest.json` 不变，任何中断都不会影响已有快照
@@ -50,15 +52,15 @@ POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 超过 `chunk_size_mb`（默认 4 MB）的文件会拆成多个请求，单片失败只重传该片：
 
 ```text
-POST snapshot_date=20261106 batch_id=<uuid> chunk_of=train_detail_20261106.json
-     chunk_index=1 chunk_total=10 files=train_detail_20261106.json.p1
+POST snapshot_date=20261106 batch_id=<uuid> chunk_of=train_detail_20261106.json.gz
+     chunk_index=1 chunk_total=3 files=train_detail_20261106.json.gz.p1
 ...
 POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 ```
 
-- 分片以 `<name>.json.p<index>` 落在 `.staging/<batch_id>/`
-- `finalize` 时按序号拼回完整文件，序号必须连续（缺片返回 `400 invalid package`）
-- 拼接完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
+- 分片以 `<name>.json.gz.p<index>` 落在 `.staging/<batch_id>/`
+- `finalize` 时按序号拼回 `.json.gz`，再解压成 `.json`；序号必须连续（缺片返回 `400 invalid package`）
+- 拼接和解压完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
 - 爬虫遇到 524/超时会自动把分片减半（4 → 2 → 1 → 512KB → … → 256KB）并换新 `batch_id` 重传，不需要手工调
 - 也可以直接在 `upload.json` 里把 `chunk_size_mb` 设成更小的值（支持 `1`、`0.5`）
 
@@ -118,7 +120,10 @@ import multer from "multer";
 import fs from "node:fs/promises";
 import path from "node:path";
 import crypto from "node:crypto";
+import { promisify } from "node:util";
+import { gunzip } from "node:zlib";
 
+const gunzipAsync = promisify(gunzip);
 const ROOT = path.resolve(process.env.DATA_DIR ?? "./data");
 const PUBLIC_BASE = process.env.PUBLIC_BASE ?? ""; // 留空则输出 /data/... 相对地址
 const UPLOAD_TOKEN = process.env.UPLOAD_TOKEN ?? "";
@@ -178,14 +183,15 @@ const moveUploaded = async (staging, files) => {
   await fs.mkdir(staging, { recursive: true });
   for (const file of files) {
     const name = path.basename(file.originalname);
-    if (!/^[A-Za-z0-9_.-]+\.json$/.test(name)) throw new Error("bad filename");
+    // 允许 .json（旧客户端）和 .json.gz（压缩客户端）
+    if (!/^[A-Za-z0-9_.-]+\.json(\.gz)?$/.test(name)) throw new Error("bad filename");
     await fs.rename(file.path, path.join(staging, name));
   }
 };
 const discardTemp = (files) => Promise.allSettled(files.map((f) => fs.unlink(f.path)));
 
-// 大文件分片：<name>.json.p1、p2…，finalize 时按序号拼接
-const PART_RE = /^(.+\.json)\.p(\d+)$/;
+// 大文件分片：<name>.json.gz.p1、p2…，finalize 时按序号拼接后再解压
+const PART_RE = /^(.+\.json(?:\.gz)?)\.p(\d+)$/;
 const assembleChunks = async (staging) => {
   const bases = new Set();
   for (const name of await fs.readdir(staging)) {
@@ -207,6 +213,16 @@ const assembleChunks = async (staging) => {
       await fs.appendFile(target, await fs.readFile(path.join(staging, part.name)));
     }
     for (const part of parts) await fs.unlink(path.join(staging, part.name));
+  }
+};
+
+// 拼接完成后再解压：train_detail_...json.gz → train_detail_...json，磁盘上只存原始 JSON
+const gunzipStaged = async (staging) => {
+  for (const name of await fs.readdir(staging)) {
+    if (!name.endsWith(".json.gz")) continue;
+    const target = path.join(staging, name.slice(0, -3));
+    await fs.writeFile(target, await gunzipAsync(await fs.readFile(path.join(staging, name))));
+    await fs.unlink(path.join(staging, name));
   }
 };
 
@@ -247,7 +263,7 @@ app.post("/api/upload", guard(UPLOAD_TOKEN), receive.array("files"), async (req,
     // 分片请求：只存 <name>.json.p<index>，不参与整包校验
     const chunkOf = String(req.body?.chunk_of ?? "").trim();
     if (chunkOf) {
-      if (!/^[A-Za-z0-9_.-]+\.json$/.test(chunkOf)) throw new Error("bad chunk_of");
+      if (!/^[A-Za-z0-9_.-]+\.json(\.gz)?$/.test(chunkOf)) throw new Error("bad chunk_of");
       const index = Number(req.body?.chunk_index ?? 0);
       if (!Number.isInteger(index) || index <= 0) throw new Error("bad chunk_index");
       if (!files[0]) throw new Error("empty chunk");
@@ -262,6 +278,7 @@ app.post("/api/upload", guard(UPLOAD_TOKEN), receive.array("files"), async (req,
     }
 
     await assembleChunks(staging);
+    await gunzipStaged(staging);
     const expected = Number(req.body?.file_total ?? 0);
     const staged = (await fs.readdir(staging)).filter((name) => !PART_RE.test(name));
     if (expected > 0 && staged.length < expected) {
