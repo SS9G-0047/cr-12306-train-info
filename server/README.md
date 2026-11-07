@@ -26,7 +26,7 @@
 | 批量标识 | `batch_id`（每次运行一个 UUID），`file_index`（1 起），`file_total` |
 | 每次请求 | 只带**一个** `files`（单文件），避免整包单请求超时 |
 | 收尾请求 | 同一 `batch_id`，带 `finalize=1`，不带文件；服务端此时校验并发布 |
-| 文件 | `train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json`（必含）、分组详情、`stopped.json`、`stopped_detail.json`、`summary.json` |
+| 文件 | 只传两个全量主文件：`train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json` |
 | 成功响应 | 任意 `2xx`，响应体不使用 |
 | 失败 | `401` 鉴权失败、`400` 字段/文件不合法、`5xx` 服务端错误（爬虫按文件重试 3 次） |
 
@@ -75,10 +75,6 @@ data/
   20261106/
     train_list_20261106.json
     train_detail_20261106.json
-    train_detail_G_20261106.json
-    stopped.json
-    stopped_detail.json
-    summary.json
   .staging/<batch_id>/        # 逐文件上传的暂存目录，finalize 成功后整体改名到 data/<date>/
   .trash/                     # 被替换的旧目录，定期清空
 ```

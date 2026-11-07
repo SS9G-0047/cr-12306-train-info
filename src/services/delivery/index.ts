@@ -36,14 +36,6 @@ const APP_TOKEN = process.env.GITHUB_APP_TOKEN ?? "";
 const USER_AGENT = "cr-12306-train-info-delivery";
 const UPLOAD_MAX_ATTEMPTS = 3;
 
-/** 过程增量文件，不属于全量包 */
-const PROCESS_ONLY_JSON = new Set([
-  "new.json",
-  "new_detail.json",
-  "stop_temp.json",
-  "stop_temp_detail.json",
-]);
-
 let cachedConfig: DeliveryConfig | null = null;
 let pendingConfig: Promise<DeliveryConfig> | null = null;
 
@@ -310,12 +302,11 @@ export const fetchBaseline = async (): Promise<DeliveryBaseline | null> => {
   }
 };
 
-/** 本次全量包只包含全量 JSON，排除 new / stop_temp 等过程产物 */
-const selectFullPackageFiles = (distDir: string): string[] =>
-  fs
-    .readdirSync(distDir)
-    .filter((name) => name.endsWith(".json") && !PROCESS_ONLY_JSON.has(name))
-    .sort();
+/** 交付只发送两个全量主文件：车次列表与车次详情 */
+const selectFullPackageFiles = (snapshotDate: string): string[] => [
+  `train_list_${snapshotDate}.json`,
+  `train_detail_${snapshotDate}.json`,
+];
 
 const wait = (ms: number): Promise<void> =>
   new Promise((resolve) => setTimeout(resolve, ms));
@@ -385,12 +376,12 @@ export const uploadFullPackage = async (
   snapshotDate: string,
 ): Promise<void> => {
   const config = await getConfig();
-  const files = selectFullPackageFiles(distDir);
-  if (
-    !files.includes(`train_list_${snapshotDate}.json`) ||
-    !files.includes(`train_detail_${snapshotDate}.json`)
-  ) {
-    throw new Error("[交付] dist 中缺少本次全量车次列表或车次详情 JSON");
+  const files = selectFullPackageFiles(snapshotDate);
+  const missing = files.filter(
+    (name) => !fs.existsSync(path.join(distDir, name)),
+  );
+  if (missing.length > 0) {
+    throw new Error(`[交付] dist 中缺少 ${missing.join("、")}`);
   }
 
   const totalBytes = files.reduce(
