@@ -26,6 +26,7 @@
 | 批量标识 | `batch_id`（每次运行一个 UUID），`file_index`（1 起），`file_total` |
 | 每次请求 | 只带**一个** `files`（单文件），避免整包单请求超时 |
 | 收尾请求 | 同一 `batch_id`，带 `finalize=1`，不带文件；服务端此时校验并发布 |
+| 大文件分片 | 同一 `batch_id`，带 `chunk_of`（目标文件名）、`chunk_index`（1 起）、`chunk_total`，`files` 中放文件名 `<name>.json.p<index>` 的字节片段；服务端按序号拼接 |
 | 文件 | 只传两个全量主文件：`train_list_YYYYMMDD.json`、`train_detail_YYYYMMDD.json` |
 | 成功响应 | 任意 `2xx`，响应体不使用 |
 | 失败 | `401` 鉴权失败、`400` 字段/文件不合法、`5xx` 服务端错误（爬虫按文件重试 3 次） |
@@ -35,15 +36,30 @@
 ### 一次完整上传的请求顺序
 
 ```text
-POST snapshot_date=20261106 batch_id=<uuid> file_index=1 file_total=12 files=train_list_20261106.json
-POST ... file_index=2 ... files=train_detail_20261106.json
-...
-POST snapshot_date=20261106 batch_id=<uuid> file_total=12 finalize=1
+POST snapshot_date=20261106 batch_id=<uuid> file_index=1 file_total=2 files=train_list_20261106.json
+POST ... file_index=2 ... files=train_detail_20261106.json   （大文件则走分片，见下）
+POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 ```
 
 - 单文件失败只重传该文件，前面的文件保留在暂存目录
 - 收尾前 `latest.json` 不变，任何中断都不会影响已有快照
 - 客户端中途放弃时，暂存目录需按 TTL 清理（建议 24 小时）
+
+### 大文件分片（避免 Cloudflare 524 / 网关 100s 超时）
+
+超过 `chunk_size_mb`（默认 4 MB）的文件会拆成多个请求，单片失败只重传该片：
+
+```text
+POST snapshot_date=20261106 batch_id=<uuid> chunk_of=train_detail_20261106.json
+     chunk_index=1 chunk_total=10 files=train_detail_20261106.json.p1
+...
+POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
+```
+
+- 分片以 `<name>.json.p<index>` 落在 `.staging/<batch_id>/`
+- `finalize` 时按序号拼回完整文件，序号必须连续（缺片返回 `400 invalid package`）
+- 拼接完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
+- 如果你的网关仍超时，把 `chunk_size_mb` 调小（例如 1）再试
 
 ### GET /api/latest
 
@@ -167,6 +183,32 @@ const moveUploaded = async (staging, files) => {
 };
 const discardTemp = (files) => Promise.allSettled(files.map((f) => fs.unlink(f.path)));
 
+// 大文件分片：<name>.json.p1、p2…，finalize 时按序号拼接
+const PART_RE = /^(.+\.json)\.p(\d+)$/;
+const assembleChunks = async (staging) => {
+  const bases = new Set();
+  for (const name of await fs.readdir(staging)) {
+    const match = PART_RE.exec(name);
+    if (match) bases.add(match[1]);
+  }
+  for (const base of bases) {
+    const parts = (await fs.readdir(staging))
+      .map((name) => ({ match: PART_RE.exec(name), name }))
+      .filter((item) => item.match && item.match[1] === base)
+      .map((item) => ({ name: item.name, index: Number(item.match[2]) }))
+      .sort((a, b) => a.index - b.index);
+    parts.forEach((part, i) => {
+      if (part.index !== i + 1) throw new Error(`missing chunk for ${base}`);
+    });
+    const target = path.join(staging, base);
+    await fs.writeFile(target, "");
+    for (const part of parts) {
+      await fs.appendFile(target, await fs.readFile(path.join(staging, part.name)));
+    }
+    for (const part of parts) await fs.unlink(path.join(staging, part.name));
+  }
+};
+
 app.post("/api/upload", guard(UPLOAD_TOKEN), receive.array("files"), async (req, res) => {
   const date = String(req.body?.snapshot_date ?? "");
   const files = req.files ?? [];
@@ -201,13 +243,26 @@ app.post("/api/upload", guard(UPLOAD_TOKEN), receive.array("files"), async (req,
   // 逐文件上传：先落 .staging/<batch_id>/，finalize=1 时才校验并发布
   const staging = path.join(STAGE, batchId);
   try {
+    // 分片请求：只存 <name>.json.p<index>，不参与整包校验
+    const chunkOf = String(req.body?.chunk_of ?? "").trim();
+    if (chunkOf) {
+      if (!/^[A-Za-z0-9_.-]+\.json$/.test(chunkOf)) throw new Error("bad chunk_of");
+      const index = Number(req.body?.chunk_index ?? 0);
+      if (!Number.isInteger(index) || index <= 0) throw new Error("bad chunk_index");
+      if (!files[0]) throw new Error("empty chunk");
+      await fs.mkdir(staging, { recursive: true });
+      await fs.rename(files[0].path, path.join(staging, `${chunkOf}.p${index}`));
+      return res.json({ ok: true, snapshot_date: date, received: 1 });
+    }
+
     await moveUploaded(staging, files);
     if (String(req.body?.finalize ?? "") !== "1") {
       return res.json({ ok: true, snapshot_date: date, received: files.length });
     }
 
+    await assembleChunks(staging);
     const expected = Number(req.body?.file_total ?? 0);
-    const staged = await fs.readdir(staging);
+    const staged = (await fs.readdir(staging)).filter((name) => !PART_RE.test(name));
     if (expected > 0 && staged.length < expected) {
       return res.status(400).json({ error: `incomplete batch: ${staged.length}/${expected}` });
     }

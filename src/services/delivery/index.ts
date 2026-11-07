@@ -20,6 +20,8 @@ type DeliveryConfig = {
   latestToken?: string;
   /** per_file（默认，逐个文件上传后 finalize）或 single（整包单请求，兼容旧服务端） */
   uploadMode: "per_file" | "single";
+  /** 大文件分片大小（MB），默认 4；小于该值的文件仍单请求上传 */
+  chunkSizeMb: number;
 };
 
 const CONFIG_REPO = (process.env.CONFIG_REPO ?? "").trim();
@@ -114,6 +116,7 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     latest_url?: unknown;
     latest_token?: unknown;
     upload_mode?: unknown;
+    chunk_size_mb?: unknown;
   };
   if (
     typeof config?.upload_url !== "string" ||
@@ -134,6 +137,8 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
   // 默认逐文件上传；旧服务端只支持整包单请求时配置 upload_mode: "single"
   const uploadMode: "per_file" | "single" =
     config.upload_mode === "single" ? "single" : "per_file";
+  const rawChunkSize = Number(config.chunk_size_mb);
+  const chunkSizeMb = Number.isFinite(rawChunkSize) && rawChunkSize > 0 ? rawChunkSize : 4;
   console.log(
     `[交付] 已读取私有仓配置 ${CONFIG_REPO}/${usedPath}：upload_mode=${uploadMode}，latest_url ${latestUrl ? "已配置" : "未配置"}`,
   );
@@ -143,6 +148,7 @@ const loadConfig = async (): Promise<DeliveryConfig> => {
     latestUrl,
     latestToken,
     uploadMode,
+    chunkSizeMb,
   };
 };
 
@@ -334,9 +340,12 @@ const postForm = async (
   });
   if (!rsp.ok) {
     const detail = await rsp.text().catch(() => "");
-    throw new Error(
-      `HTTP ${rsp.status}${detail ? ` ${detail.slice(0, 200)}` : ""}`,
-    );
+    // 网关错误页（如 Cloudflare 524）是 HTML，截断也没意义，只保留状态码
+    const snippet =
+      detail && !detail.trimStart().startsWith("<")
+        ? ` ${detail.slice(0, 200)}`
+        : "";
+    throw new Error(`HTTP ${rsp.status}${snippet}`);
   }
 };
 
@@ -395,23 +404,51 @@ export const uploadFullPackage = async (
   if (config.uploadMode === "per_file") {
     const batchId = randomUUID();
     const startedAt = Date.now();
+    const chunkBytes = Math.max(1, Math.round(config.chunkSizeMb)) * 1024 * 1024;
     for (const [index, name] of files.entries()) {
       const content = fs.readFileSync(path.join(distDir, name));
-      const blob = new Blob([new Uint8Array(content)], {
-        type: "application/json",
-      });
+      const megabytes = (content.byteLength / 1024 / 1024).toFixed(2);
+      const chunkTotal = Math.ceil(content.byteLength / chunkBytes);
+
+      if (chunkTotal <= 1) {
+        console.log(`[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB）`);
+        await withRetry(`上传 ${name}`, async () => {
+          const form = new FormData();
+          form.append("snapshot_date", snapshotDate);
+          form.append("batch_id", batchId);
+          form.append("file_index", String(index + 1));
+          form.append("file_total", String(files.length));
+          form.append(
+            "files",
+            new Blob([new Uint8Array(content)], { type: "application/json" }),
+            name,
+          );
+          await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+        });
+        continue;
+      }
+
+      // 大文件按 chunk_size_mb 切片，单片独立请求，避免代理 100s 超时（如 Cloudflare 524）
       console.log(
-        `[交付] 上传 ${index + 1}/${files.length} ${name}（${(content.byteLength / 1024 / 1024).toFixed(2)} MB）`,
+        `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB，分 ${chunkTotal} 片）`,
       );
-      await withRetry(`上传 ${name}`, async () => {
-        const form = new FormData();
-        form.append("snapshot_date", snapshotDate);
-        form.append("batch_id", batchId);
-        form.append("file_index", String(index + 1));
-        form.append("file_total", String(files.length));
-        form.append("files", blob, name);
-        await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
-      });
+      for (let part = 1; part <= chunkTotal; part++) {
+        const start = (part - 1) * chunkBytes;
+        const slice = content.subarray(start, Math.min(start + chunkBytes, content.byteLength));
+        const blob = new Blob([new Uint8Array(slice)], {
+          type: "application/octet-stream",
+        });
+        await withRetry(`上传 ${name} 分片 ${part}/${chunkTotal}`, async () => {
+          const form = new FormData();
+          form.append("snapshot_date", snapshotDate);
+          form.append("batch_id", batchId);
+          form.append("chunk_of", name);
+          form.append("chunk_index", String(part));
+          form.append("chunk_total", String(chunkTotal));
+          form.append("chunk", blob, `${name}.p${part}`);
+          await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+        });
+      }
     }
 
     await withRetry("提交全量包", async () => {
