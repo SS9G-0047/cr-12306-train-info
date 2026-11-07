@@ -38,7 +38,7 @@ const GITHUB_API = process.env.GITHUB_API_URL ?? "https://api.github.com";
 // 由 actions/create-github-app-token 以 App 身份换取；代码不再自行签发 JWT
 const APP_TOKEN = process.env.GITHUB_APP_TOKEN ?? "";
 const USER_AGENT = "cr-12306-train-info-delivery";
-/** 上传重试次数：502/503 多为网关或源站瞬时抖动，次数放宽到 6 次 */
+/** 上传重试次数（含首次，最多 6 次尝试） */
 const UPLOAD_MAX_ATTEMPTS = 6;
 
 let cachedConfig: DeliveryConfig | null = null;

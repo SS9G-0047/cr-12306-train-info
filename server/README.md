@@ -62,7 +62,7 @@ POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 - `finalize` 时按序号拼回 `.json.gz`，再解压成 `.json`；序号必须连续（缺片返回 `400 invalid package`）
 - 拼接和解压完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
 - 分片大小固定 2 MB（按压缩后字节计），不再随配置或失败调整
-- 单个分片失败重试 6 次；仍失败则整批放弃，不会无限重传
+- 单个分片最多尝试 4 次；仍失败则整批放弃，不会无限重传
 
 ### GET /api/latest
 
