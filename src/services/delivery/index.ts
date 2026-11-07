@@ -321,6 +321,8 @@ const wait = (ms: number): Promise<void> =>
 const PER_FILE_TIMEOUT_MS = 900_000;
 const SINGLE_TIMEOUT_MS = 600_000;
 const FINALIZE_TIMEOUT_MS = 120_000;
+/** 网关持续超时时分片可以缩到的最小粒度 */
+const MIN_CHUNK_BYTES = 256 * 1024;
 
 const postForm = async (
   config: DeliveryConfig,
@@ -349,6 +351,43 @@ const postForm = async (
   }
 };
 
+/** 网关超时（如 Cloudflare 524）标记：不重试同一分片，交给外层缩小分片重传 */
+const SLOW_GATEWAY = "slowGateway";
+
+const isSlowGateway = (error: unknown): boolean =>
+  Boolean(
+    error &&
+      typeof error === "object" &&
+      (error as Record<string, unknown>)[SLOW_GATEWAY] === true,
+  );
+
+const isGatewayTimeout = (error: unknown): boolean => {
+  const message = error instanceof Error ? error.message : String(error);
+  return /\b524\b/.test(message) || /timed out|timeout|aborted/i.test(message);
+};
+
+const markSlowGateway = <T>(error: T): T => {
+  if (error && typeof error === "object") {
+    (error as Record<string, unknown>)[SLOW_GATEWAY] = true;
+  }
+  return error;
+};
+
+/** 上传阶段专用：遇到网关超时立刻抛出，避免原地重试浪费时间 */
+const uploadRequest = async (
+  config: DeliveryConfig,
+  form: FormData,
+  snapshotDate: string,
+  timeoutMs: number,
+): Promise<void> => {
+  try {
+    await postForm(config, form, snapshotDate, timeoutMs);
+  } catch (error) {
+    if (isGatewayTimeout(error)) throw markSlowGateway(error);
+    throw error;
+  }
+};
+
 const withRetry = async (
   label: string,
   action: () => Promise<void>,
@@ -359,6 +398,7 @@ const withRetry = async (
       return;
     } catch (error) {
       const message = error instanceof Error ? error.message : String(error);
+      if (isSlowGateway(error)) throw error;
       if (attempt >= UPLOAD_MAX_ATTEMPTS) {
         throw new Error(
           `[交付] ${label} 失败（已尝试 ${UPLOAD_MAX_ATTEMPTS} 次）：${message}`,
@@ -402,16 +442,26 @@ export const uploadFullPackage = async (
   );
 
   if (config.uploadMode === "per_file") {
-    const batchId = randomUUID();
     const startedAt = Date.now();
-    const chunkBytes = Math.max(1, Math.round(config.chunkSizeMb)) * 1024 * 1024;
-    for (const [index, name] of files.entries()) {
+    const initialChunkBytes = Math.max(
+      MIN_CHUNK_BYTES,
+      Math.round(config.chunkSizeMb * 1024 * 1024),
+    );
+    let chunkBytes = initialChunkBytes;
+
+    const uploadFile = async (
+      batchId: string,
+      index: number,
+      name: string,
+    ): Promise<void> => {
       const content = fs.readFileSync(path.join(distDir, name));
       const megabytes = (content.byteLength / 1024 / 1024).toFixed(2);
       const chunkTotal = Math.ceil(content.byteLength / chunkBytes);
 
       if (chunkTotal <= 1) {
-        console.log(`[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB）`);
+        console.log(
+          `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB）`,
+        );
         await withRetry(`上传 ${name}`, async () => {
           const form = new FormData();
           form.append("snapshot_date", snapshotDate);
@@ -423,18 +473,22 @@ export const uploadFullPackage = async (
             new Blob([new Uint8Array(content)], { type: "application/json" }),
             name,
           );
-          await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+          await uploadRequest(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
         });
-        continue;
+        return;
       }
 
-      // 大文件按 chunk_size_mb 切片，单片独立请求，避免代理 100s 超时（如 Cloudflare 524）
+      // 大文件按 chunkBytes 切片，单片独立请求，避免代理 100s 超时（如 Cloudflare 524）
+      const sizeLabel = (chunkBytes / 1024 / 1024).toFixed(2).replace(/\.?0+$/, "");
       console.log(
-        `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB，分 ${chunkTotal} 片）`,
+        `[交付] 上传 ${index + 1}/${files.length} ${name}（${megabytes} MB，分 ${chunkTotal} 片，每片 ${sizeLabel} MB）`,
       );
       for (let part = 1; part <= chunkTotal; part++) {
         const start = (part - 1) * chunkBytes;
-        const slice = content.subarray(start, Math.min(start + chunkBytes, content.byteLength));
+        const slice = content.subarray(
+          start,
+          Math.min(start + chunkBytes, content.byteLength),
+        );
         const blob = new Blob([new Uint8Array(slice)], {
           type: "application/octet-stream",
         });
@@ -446,22 +500,46 @@ export const uploadFullPackage = async (
           form.append("chunk_index", String(part));
           form.append("chunk_total", String(chunkTotal));
           form.append("chunk", blob, `${name}.p${part}`);
-          await postForm(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
+          await uploadRequest(config, form, snapshotDate, PER_FILE_TIMEOUT_MS);
         });
+      }
+    };
+
+    const sendBatch = async (): Promise<void> => {
+      const batchId = randomUUID();
+      for (const [index, name] of files.entries()) {
+        await uploadFile(batchId, index, name);
+      }
+      // 收尾失败不缩小分片重传（数据可能已发布），只按原样重试
+      await withRetry("提交全量包", async () => {
+        const form = new FormData();
+        form.append("snapshot_date", snapshotDate);
+        form.append("batch_id", batchId);
+        form.append("file_total", String(files.length));
+        form.append("finalize", "1");
+        await postForm(config, form, snapshotDate, FINALIZE_TIMEOUT_MS);
+      });
+    };
+
+    // 网关超时且分片已到下限时放弃；否则分片减半、换新 batch_id 重传
+    for (;;) {
+      try {
+        await sendBatch();
+        break;
+      } catch (error) {
+        if (!isSlowGateway(error) || chunkBytes <= MIN_CHUNK_BYTES) throw error;
+        chunkBytes = Math.max(MIN_CHUNK_BYTES, Math.floor(chunkBytes / 2));
+        const sizeLabel = (chunkBytes / 1024 / 1024)
+          .toFixed(2)
+          .replace(/\.?0+$/, "");
+        console.log(
+          `[交付] 网关超时，分片缩小到 ${sizeLabel} MB，用新批次重传`,
+        );
       }
     }
 
-    await withRetry("提交全量包", async () => {
-      const form = new FormData();
-      form.append("snapshot_date", snapshotDate);
-      form.append("batch_id", batchId);
-      form.append("file_total", String(files.length));
-      form.append("finalize", "1");
-      await postForm(config, form, snapshotDate, FINALIZE_TIMEOUT_MS);
-    });
-
     console.log(
-      `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB，耗时 ${((Date.now() - startedAt) / 1000).toFixed(0)}s）`,
+      `[交付] 全量包上传成功（${files.length} 个文件，${(totalBytes / 1024 / 1024).toFixed(2)} MB，分片 ${(chunkBytes / 1024 / 1024).toFixed(2).replace(/\.?0+$/, "")} MB，耗时 ${((Date.now() - startedAt) / 1000).toFixed(0)}s）`,
     );
     return;
   }

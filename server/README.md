@@ -59,7 +59,8 @@ POST snapshot_date=20261106 batch_id=<uuid> file_total=2 finalize=1
 - 分片以 `<name>.json.p<index>` 落在 `.staging/<batch_id>/`
 - `finalize` 时按序号拼回完整文件，序号必须连续（缺片返回 `400 invalid package`）
 - 拼接完成后才校验 `train_list`/`train_detail`，所以分片不影响原子发布
-- 如果你的网关仍超时，把 `chunk_size_mb` 调小（例如 1）再试
+- 爬虫遇到 524/超时会自动把分片减半（4 → 2 → 1 → 512KB → … → 256KB）并换新 `batch_id` 重传，不需要手工调
+- 也可以直接在 `upload.json` 里把 `chunk_size_mb` 设成更小的值（支持 `1`、`0.5`）
 
 ### GET /api/latest
 
@@ -343,6 +344,7 @@ location / {
 ```
 
 `upload_mode` 默认 `per_file`（逐文件 + finalize）；服务端还是旧版整包接口时改成 `"single"`。
+`chunk_size_mb` 可选，默认 `4`，只在 `per_file` 下生效，越大请求越少、越小越抗网关超时。
 
 GitHub App：
 

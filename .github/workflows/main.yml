@@ -5,9 +5,15 @@ on:
     # 每天北京时间 07:20（即 UTC 前一天 23:20）
     - cron: "20 23 * * *"
   workflow_dispatch:
+    inputs:
+      reuse_release:
+        description: "跳过抓取，复用当天 delivery Release 里的两个 JSON，只测上传链路"
+        type: boolean
+        default: false
 
 permissions:
-  contents: read
+  # 需要创建 delivery Release 供复用；数据本体仍只上传到私有服务端
+  contents: write
 
 jobs:
   crawl-and-deliver:
@@ -38,6 +44,12 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+
+      - name: Resolve target date
+        id: target-date
+        run: |
+          set +x
+          echo "date=$(date -u -d '+13 days' +%Y%m%d)" >> "$GITHUB_OUTPUT"
 
       - name: Resolve config repository
         id: config-repo
@@ -80,14 +92,70 @@ jobs:
           echo "::error::$REPO 下找不到 config/upload.json 或 upload.json（HTTP 404）。请检查 CONFIG_REPO、文件路径，并确认 App 已安装到该仓且有 Contents: read"
           exit 1
 
-      - name: Run crawler and deliver private package
+      - name: Reuse delivery JSON from release
+        if: ${{ inputs.reuse_release }}
         env:
-          # 历史 Release 仅作为增量基线回退读取，不再发布
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_DATE: ${{ steps.target-date.outputs.date }}
+        run: |
+          set +x
+          TAG="delivery-${TARGET_DATE}"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            echo "::error::找不到 Release $TAG，先跑一次抓取（或去掉 reuse_release）"
+            exit 1
+          fi
+          mkdir -p dist
+          gh release download "$TAG" --repo "$GITHUB_REPOSITORY" --pattern "*.json" --dir dist
+          for FILE in "train_list_${TARGET_DATE}.json" "train_detail_${TARGET_DATE}.json"; do
+            if [ ! -f "dist/$FILE" ]; then
+              echo "::error::Release $TAG 中缺少 $FILE"
+              exit 1
+            fi
+          done
+          echo "已复用 $TAG 的交付文件"
+
+      - name: Run crawler
+        if: ${{ !inputs.reuse_release }}
+        env:
+          # 历史 Release 仅作为增量基线回退读取
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           # 用 Action 换到的 installation token 读取私有仓配置，地址与 token 不进日志
           GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
           CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
           CONFIG_PATH: config/upload.json
+          # 上传统一放到后面的独立步骤，方便抓取成功后单独重试
+          SKIP_UPLOAD: "1"
         run: |
           set +x
           npm run dev
+
+      # 先发布交付文件，上传失败时可直接复用 Release 重试，不用重新抓取
+      - name: Publish delivery JSON to release
+        if: ${{ !inputs.reuse_release }}
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_DATE: ${{ steps.target-date.outputs.date }}
+        run: |
+          set +x
+          TAG="delivery-${TARGET_DATE}"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --title "Delivery ${TARGET_DATE}" \
+              --notes "train_list / train_detail，仅用于交付链路复用" \
+              --latest=false
+          fi
+          gh release upload "$TAG" \
+            "dist/train_list_${TARGET_DATE}.json" \
+            "dist/train_detail_${TARGET_DATE}.json" \
+            --repo "$GITHUB_REPOSITORY" --clobber
+
+      - name: Upload to private server
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
+          CONFIG_PATH: config/upload.json
+          DELIVERY_DATE: ${{ steps.target-date.outputs.date }}
+        run: |
+          set +x
+          npm run deliver
