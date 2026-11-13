@@ -5,6 +5,11 @@ on:
     # 每天北京时间 07:20（即 UTC 前一天 23:20）
     - cron: "20 23 * * *"
   workflow_dispatch:
+    inputs:
+      target_date:
+        description: "目标日期 YYYYMMDD，留空则自动取当前日期 + 13 天"
+        required: false
+        type: string
 
 permissions:
   contents: read
@@ -41,9 +46,22 @@ jobs:
 
       - name: Resolve target date
         id: target-date
+        env:
+          INPUT_DATE: ${{ inputs.target_date }}
         run: |
           set +x
-          echo "date=$(date -u -d '+13 days' +%Y%m%d)" >> "$GITHUB_OUTPUT"
+          DATE=$(printf '%s' "$INPUT_DATE" | tr -d '[:space:]-')
+          if [ -n "$DATE" ]; then
+            if ! printf '%s' "$DATE" | grep -Eq '^[0-9]{8}$'; then
+              echo "::error::target_date 非法：$INPUT_DATE，应为 YYYYMMDD"
+              exit 1
+            fi
+            echo "使用手动指定日期 $DATE"
+          else
+            DATE=$(date -u -d '+13 days' +%Y%m%d)
+            echo "使用自动日期 $DATE"
+          fi
+          echo "date=$DATE" >> "$GITHUB_OUTPUT"
 
       - name: Resolve config repository
         id: config-repo
@@ -96,6 +114,7 @@ jobs:
           CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
           CONFIG_PATH: config/upload.json
           SKIP_UPLOAD: "1"
+          TARGET_DATE: ${{ steps.target-date.outputs.date }}
         run: |
           set +x
           for ATTEMPT in $(seq 1 10); do

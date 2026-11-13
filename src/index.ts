@@ -214,9 +214,17 @@ class Spider {
   };
 
   /**
-   * 获取目标日期（当前日期 + 13 天），格式：YYYYMMDD
+   * 获取目标日期，格式：YYYYMMDD。
+   * 优先使用 TARGET_DATE 环境变量（便于重跑指定日期），否则取当前日期 + 13 天。
    */
   private getTargetDate = (): string => {
+    const override = (process.env.TARGET_DATE ?? "").trim();
+    if (override) {
+      if (!/^\d{8}$/.test(override)) {
+        throw new Error(`[目标日期] TARGET_DATE 非法：${override}，应为 YYYYMMDD`);
+      }
+      return override;
+    }
     const d = new Date();
     d.setDate(d.getDate() + 13);
     const y = d.getFullYear();
