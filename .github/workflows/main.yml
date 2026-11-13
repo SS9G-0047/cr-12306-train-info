@@ -7,7 +7,7 @@ on:
   workflow_dispatch:
     inputs:
       target_date:
-        description: "目标日期 YYYYMMDD，留空则自动取当前日期 + 13 天"
+        description: "基准日期 YYYYMMDD（会在此基础上加 13 天），留空则以今天为基准"
         required: false
         type: string
 
@@ -50,17 +50,17 @@ jobs:
           INPUT_DATE: ${{ inputs.target_date }}
         run: |
           set +x
-          DATE=$(printf '%s' "$INPUT_DATE" | tr -d '[:space:]-')
-          if [ -n "$DATE" ]; then
-            if ! printf '%s' "$DATE" | grep -Eq '^[0-9]{8}$'; then
-              echo "::error::target_date 非法：$INPUT_DATE，应为 YYYYMMDD"
-              exit 1
-            fi
-            echo "使用手动指定日期 $DATE"
-          else
-            DATE=$(date -u -d '+13 days' +%Y%m%d)
-            echo "使用自动日期 $DATE"
+          BASE=$(printf '%s' "$INPUT_DATE" | tr -d '[:space:]')
+          if [ -z "$BASE" ]; then
+            BASE=$(date -u +%Y%m%d)
+            echo "未指定日期，基准取今天 $BASE"
+          elif ! printf '%s' "$BASE" | grep -Eq '^[0-9]{4}-?[0-9]{2}-?[0-9]{2}$'; then
+            echo "::error::target_date 非法：$INPUT_DATE，应为 YYYYMMDD"
+            exit 1
           fi
+          BASE=$(printf '%s' "$BASE" | tr -d '-')
+          DATE=$(date -u -d "$BASE +13 days" +%Y%m%d)
+          echo "基准日期 $BASE，抓取目标日期 $DATE"
           echo "date=$DATE" >> "$GITHUB_OUTPUT"
 
       - name: Resolve config repository
