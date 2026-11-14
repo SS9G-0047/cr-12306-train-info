@@ -104,7 +104,7 @@ jobs:
           echo "::error::$REPO 下找不到 config/upload.json 或 upload.json（HTTP 404）。请检查 CONFIG_REPO、文件路径，并确认 App 已安装到该仓且有 Contents: read"
           exit 1
 
-      # 抓取失败最多重试 10 次；上传统一放到后面的独立步骤
+      # 每组连跑 10 轮，整组失败后等 5 分钟再开下一组，直到成功
       - name: Run crawler
         env:
           # 历史 Release 仅作为增量基线回退读取
@@ -117,18 +117,18 @@ jobs:
           TARGET_DATE: ${{ steps.target-date.outputs.date }}
         run: |
           set +x
-          for ATTEMPT in $(seq 1 10); do
-            echo "抓取尝试 ${ATTEMPT}/10"
-            rm -rf dist
-            if npm run dev; then
-              exit 0
-            fi
-            if [ "$ATTEMPT" -eq 10 ]; then
-              echo "::error::抓取连续失败 10 次，放弃"
-              exit 1
-            fi
-            echo "抓取失败，30 秒后重试"
-            sleep 30
+          BATCH=0
+          while true; do
+            BATCH=$((BATCH + 1))
+            for ATTEMPT in $(seq 1 10); do
+              echo "第 ${BATCH} 组，抓取尝试 ${ATTEMPT}/10"
+              rm -rf dist
+              if npm run dev; then
+                exit 0
+              fi
+            done
+            echo "第 ${BATCH} 组连续失败 10 轮，5 分钟后开始下一组"
+            sleep 300
           done
 
       - name: Upload to private server
