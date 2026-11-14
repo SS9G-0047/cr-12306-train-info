@@ -131,10 +131,20 @@ jobs:
             sleep 300
           done
 
+      # 抓取可能持续超过 1 小时，App token 会过期，上传前重新换票
+      - name: Refresh GitHub App token
+        id: app-token-upload
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.APP_CLIENT_ID }}
+          private-key: ${{ secrets.APP_PRIVATE_KEY }}
+          owner: ${{ steps.config-repo.outputs.owner }}
+          repositories: ${{ steps.config-repo.outputs.repo }}
+
       - name: Upload to private server
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          GITHUB_APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          GITHUB_APP_TOKEN: ${{ steps.app-token-upload.outputs.token }}
           CONFIG_REPO: ${{ secrets.CONFIG_REPO }}
           CONFIG_PATH: config/upload.json
           DELIVERY_DATE: ${{ steps.target-date.outputs.date }}
