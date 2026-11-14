@@ -12,7 +12,8 @@ on:
         type: string
 
 permissions:
-  contents: read
+  # 上传失败时把交付 JSON 发成 Release，需要写权限
+  contents: write
 
 jobs:
   crawl-and-deliver:
@@ -151,3 +152,28 @@ jobs:
         run: |
           set +x
           npm run deliver
+
+      # 上传失败时把交付 JSON 发成 Release，避免整轮重抓
+      - name: Publish JSON to release on failure
+        if: failure()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_DATE: ${{ steps.target-date.outputs.date }}
+        run: |
+          set +x
+          if [ ! -f "dist/train_list_${TARGET_DATE}.json" ] || [ ! -f "dist/train_detail_${TARGET_DATE}.json" ]; then
+            echo "dist 不完整，跳过 Release"
+            exit 0
+          fi
+          TAG="delivery-${TARGET_DATE}"
+          if ! gh release view "$TAG" --repo "$GITHUB_REPOSITORY" >/dev/null 2>&1; then
+            gh release create "$TAG" --repo "$GITHUB_REPOSITORY" \
+              --title "Delivery ${TARGET_DATE}" \
+              --notes "自动保存的交付 JSON，用于复用重跑" \
+              --latest=false
+          fi
+          gh release upload "$TAG" \
+            "dist/train_list_${TARGET_DATE}.json" \
+            "dist/train_detail_${TARGET_DATE}.json" \
+            --repo "$GITHUB_REPOSITORY" --clobber
+          echo "已发布 Release $TAG"
